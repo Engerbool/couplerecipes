@@ -20,10 +20,15 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   existingRecipe,
   isNewVersion
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Common cooking units
+  const units = i18n.language === 'ko'
+    ? ['큰술', '작은술', '컵', 'g', 'kg', 'ml', 'L', '개', '쪽', '줌', '적당량']
+    : ['Tbsp', 'tsp', 'cup', 'g', 'kg', 'ml', 'L', 'piece', 'clove', 'handful', 'to taste'];
   const [title, setTitle] = useState('');
   const [image, setImage] = useState<string>('');
-  const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', amount: '' }]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: '', unit: '' }]);
   const [steps, setSteps] = useState<string[]>(['']);
   const [notes, setNotes] = useState('');
 
@@ -34,15 +39,20 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
         setImage(existingRecipe.imageUrl);
         const lastVer = existingRecipe.versions[existingRecipe.versions.length - 1];
         
-        // Handle migration from old string[] to Ingredient[] if necessary
+        // Handle migration from old formats to new Ingredient format
         const loadedIngredients = lastVer.ingredients.map(ing => {
           if (typeof ing === 'string') {
-            return { name: ing, amount: '' };
+            // Migration: old string[] format
+            return { name: ing, quantity: '', unit: '' };
+          }
+          // Migration: old { name, amount } format to new { name, quantity, unit } format
+          if ('amount' in ing && !('quantity' in ing)) {
+            return { name: ing.name, quantity: ing.amount || '', unit: '' };
           }
           return ing;
         });
 
-        setIngredients(loadedIngredients.length > 0 ? loadedIngredients : [{ name: '', amount: '' }]);
+        setIngredients(loadedIngredients.length > 0 ? loadedIngredients : [{ name: '', quantity: '', unit: '' }]);
         setSteps(lastVer.steps.length > 0 ? [...lastVer.steps] : ['']);
         setNotes('');
       }
@@ -68,12 +78,12 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   };
 
   const addIngredient = () => {
-    setIngredients([...ingredients, { name: '', amount: '' }]);
+    setIngredients([...ingredients, { name: '', quantity: '', unit: '' }]);
   };
 
   const removeIngredient = (index: number) => {
     const newArr = ingredients.filter((_, i) => i !== index);
-    setIngredients(newArr.length ? newArr : [{ name: '', amount: '' }]);
+    setIngredients(newArr.length ? newArr : [{ name: '', quantity: '', unit: '' }]);
   };
 
   const moveIngredient = (index: number, direction: -1 | 1) => {
@@ -225,10 +235,18 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
                 />
 
                 <input
-                  value={ing.amount}
-                  onChange={(e) => updateIngredient(index, 'amount', e.target.value)}
-                  placeholder={t('editor.amount')}
-                  className="w-24 md:w-32 px-3 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-right bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+                  value={ing.quantity}
+                  onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
+                  placeholder={t('editor.quantity')}
+                  className="w-16 md:w-20 px-2 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-center bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+                />
+
+                <input
+                  value={ing.unit}
+                  onChange={(e) => updateIngredient(index, 'unit', e.target.value)}
+                  placeholder={t('editor.unit')}
+                  list="unit-suggestions"
+                  className="w-16 md:w-24 px-2 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-center bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
                 />
 
                 <div className="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
@@ -308,6 +326,13 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
             {existingRecipe ? t('editor.publishVersion') : t('editor.createRecipe')}
           </Button>
         </div>
+
+        {/* Unit suggestions datalist */}
+        <datalist id="unit-suggestions">
+          {units.map((unit) => (
+            <option key={unit} value={unit} />
+          ))}
+        </datalist>
       </form>
     </div>
   );

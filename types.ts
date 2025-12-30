@@ -42,7 +42,8 @@ export interface Comment {
 
 export interface Ingredient {
   name: string;
-  amount: string;
+  quantity: string;  // 숫자 또는 "적당량" 같은 텍스트
+  unit: string;      // 단위 (큰술, g, 개, etc)
 }
 
 export interface RecipeVersion {

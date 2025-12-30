@@ -124,7 +124,13 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     </div>
                     <div className="flex justify-between w-full">
                       <span className="text-lg font-medium">{ing.name}</span>
-                      {ing.amount && <span className="text-lg text-stone-500 dark:text-dark-text-secondary">{ing.amount}</span>}
+                      {(() => {
+                        // Support both new format (quantity + unit) and old format (amount)
+                        const displayAmount = 'quantity' in ing && 'unit' in ing
+                          ? `${ing.quantity}${ing.unit ? ' ' + ing.unit : ''}`.trim()
+                          : ('amount' in ing ? ing.amount : '');
+                        return displayAmount && <span className="text-lg text-stone-500 dark:text-dark-text-secondary">{displayAmount}</span>;
+                      })()}
                     </div>
                   </div>
                 );
@@ -259,7 +265,15 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                         <div className="w-2 h-2 rounded-full bg-amber-400 dark:bg-amber-500 flex-shrink-0" />
                         <span className="font-medium">{ing.name}</span>
                       </div>
-                      <span className="text-stone-500 dark:text-dark-text-secondary font-medium">{ing.amount}</span>
+                      <span className="text-stone-500 dark:text-dark-text-secondary font-medium">
+                        {(() => {
+                          // Support both new format (quantity + unit) and old format (amount)
+                          const displayAmount = 'quantity' in ing && 'unit' in ing
+                            ? `${ing.quantity}${ing.unit ? ' ' + ing.unit : ''}`.trim()
+                            : ('amount' in ing ? ing.amount : '');
+                          return displayAmount;
+                        })()}
+                      </span>
                     </li>
                   );
                 })}
