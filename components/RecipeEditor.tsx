@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Timestamp } from 'firebase/firestore';
 import { Recipe, User, RecipeVersion, Ingredient } from '../types';
 import { Button } from './Button';
-import { Save, X, Image as ImageIcon, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Save, X, Image as ImageIcon, Plus, Trash2, ArrowUp, ArrowDown, User as UserIcon } from 'lucide-react';
 
 interface RecipeEditorProps {
   user: User;
@@ -309,14 +309,30 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-stone-700 dark:text-dark-text-secondary mb-1">{t('editor.versionNotes')}</label>
-          <input
-            type="text"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-4 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
-            placeholder={t('editor.notesPlaceholder')}
-          />
+          <label className="block text-sm font-medium text-stone-700 dark:text-dark-text-secondary mb-3">{t('editor.versionNotes')}</label>
+          <div className="flex gap-3 items-start bg-stone-50 dark:bg-dark-bg-tertiary p-4 rounded-xl border border-stone-200 dark:border-dark-border-primary">
+            {user.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt={user.name}
+                className="w-10 h-10 rounded-full flex-shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                <UserIcon size={20} className="text-amber-600 dark:text-amber-500" />
+              </div>
+            )}
+            <div className="flex-1">
+              <div className="text-sm font-medium text-stone-700 dark:text-dark-text-primary mb-2">{user.name}</div>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none resize-y bg-white dark:bg-dark-bg-secondary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+                placeholder={t('editor.notesPlaceholder')}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-6 border-t border-stone-100 dark:border-dark-border-primary">
