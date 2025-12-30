@@ -150,7 +150,7 @@ const App: React.FC = () => {
           <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600">
             <Heart size={40} fill="currentColor" />
           </div>
-          <h1 className="text-3xl font-bold text-stone-800 mb-2 font-gowun">{t('app.title')}</h1>
+          <h1 className="text-3xl font-bold text-stone-800 mb-2 font-diphylleia">{t('app.title')}</h1>
           <p className="text-stone-500 mb-8" dangerouslySetInnerHTML={{ __html: `${t('app.tagline')}<br/>${t('app.subtitle')}` }} />
 
           <Button onClick={handleGoogleLogin} className="w-full py-3 text-lg justify-center">
@@ -174,7 +174,7 @@ const App: React.FC = () => {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-dark-bg-secondary/80 backdrop-blur-md border-b border-stone-200 dark:border-dark-border-primary px-4 md:px-8 py-4 flex justify-between items-center">
         <div
-          className="flex items-center gap-2 font-bold text-xl text-amber-600 dark:text-amber-500 cursor-pointer font-gowun"
+          className="flex items-center gap-2 font-bold text-xl text-amber-600 dark:text-amber-500 cursor-pointer font-diphylleia"
           onClick={() => { setView('DASHBOARD'); setSelectedRecipe(null); }}
         >
           <UtensilsCrossed /> {t('app.title')}
@@ -245,8 +245,7 @@ const App: React.FC = () => {
                   <UtensilsCrossed size={40} />
                 </div>
                 <h3 className="text-lg font-bold text-stone-600 dark:text-dark-text-secondary mb-2">{t('dashboard.noRecipes')}</h3>
-                <p className="text-stone-400 dark:text-dark-text-tertiary mb-6 max-w-xs mx-auto" dangerouslySetInnerHTML={{ __html: t('dashboard.noRecipesDesc') }} />
-                <Button onClick={() => setView('CREATE_RECIPE')}>{t('dashboard.createRecipe')}</Button>
+                <p className="text-stone-400 dark:text-dark-text-tertiary max-w-xs mx-auto" dangerouslySetInnerHTML={{ __html: t('dashboard.noRecipesDesc') }} />
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

@@ -13,7 +13,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Noto Sans KR', 'sans-serif'],
-        gowun: ['Gowun Batang', 'serif'],
+        diphylleia: ['Diphylleia', 'serif'],
       },
       colors: {
         dark: {
