@@ -16,10 +16,10 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-1";
   
   const variants = {
-    primary: "bg-amber-500 hover:bg-amber-600 text-white focus:ring-amber-500 shadow-sm",
-    secondary: "bg-stone-200 hover:bg-stone-300 text-stone-800 focus:ring-stone-400",
-    danger: "bg-red-500 hover:bg-red-600 text-white focus:ring-red-500",
-    ghost: "bg-transparent hover:bg-stone-100 text-stone-600 hover:text-stone-900"
+    primary: "bg-amber-500 dark:bg-amber-600 hover:bg-amber-600 dark:hover:bg-amber-500 text-white focus:ring-amber-500 shadow-sm",
+    secondary: "bg-stone-200 dark:bg-dark-bg-tertiary hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-800 dark:text-dark-text-primary focus:ring-stone-400 dark:focus:ring-stone-600",
+    danger: "bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white focus:ring-red-500",
+    ghost: "bg-transparent hover:bg-stone-100 dark:hover:bg-dark-bg-tertiary text-stone-600 dark:text-dark-text-secondary hover:text-stone-900 dark:hover:text-dark-text-primary"
   };
 
   return (

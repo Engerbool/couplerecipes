@@ -12,6 +12,7 @@ import { PartnerInviteModal } from './components/PartnerInviteModal';
 import { PartnerBadge } from './components/PartnerBadge';
 import { DisconnectModal } from './components/DisconnectModal';
 import { LanguageToggle } from './components/LanguageToggle';
+import { DarkModeToggle } from './components/DarkModeToggle';
 import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -169,17 +170,18 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 font-sans">
+    <div className="min-h-screen bg-stone-50 dark:bg-dark-bg-primary text-stone-900 dark:text-dark-text-primary font-sans">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 px-4 md:px-8 py-4 flex justify-between items-center">
+      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-dark-bg-secondary/80 backdrop-blur-md border-b border-stone-200 dark:border-dark-border-primary px-4 md:px-8 py-4 flex justify-between items-center">
         <div
-          className="flex items-center gap-2 font-bold text-xl text-amber-600 cursor-pointer font-gowun"
+          className="flex items-center gap-2 font-bold text-xl text-amber-600 dark:text-amber-500 cursor-pointer font-gowun"
           onClick={() => { setView('DASHBOARD'); setSelectedRecipe(null); }}
         >
           <UtensilsCrossed /> {t('app.title')}
         </div>
 
         <div className="flex items-center gap-4">
+          <DarkModeToggle />
           <LanguageToggle />
           {currentUser?.partnerId ? (
             <>
@@ -201,9 +203,9 @@ const App: React.FC = () => {
               <Share2 size={16} /> {t('nav.invitePartner')}
             </Button>
           )}
-          <div className="flex items-center gap-3 pl-4 border-l border-stone-200">
+          <div className="flex items-center gap-3 pl-4 border-l border-stone-200 dark:border-dark-border-primary">
             <div className="text-right hidden sm:block">
-              <div className="text-sm font-bold text-stone-800">{currentUser.name}</div>
+              <div className="text-sm font-bold text-stone-800 dark:text-dark-text-primary">{currentUser.name}</div>
             </div>
             {currentUser.photoURL ? (
               <img
@@ -216,7 +218,7 @@ const App: React.FC = () => {
                 <UserIcon size={18} />
               </div>
             )}
-            <button onClick={handleLogout} className="text-stone-400 hover:text-red-500 transition-colors ml-2" title={t('auth.logout')}>
+            <button onClick={handleLogout} className="text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400 transition-colors ml-2" title={t('auth.logout')}>
               <LogOut size={18} />
             </button>
           </div>
@@ -229,8 +231,8 @@ const App: React.FC = () => {
           <>
             <div className="flex justify-between items-end mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-stone-800 mb-2">{t('dashboard.title')}</h2>
-                <p className="text-stone-500">{t('dashboard.subtitle', { count: recipes.length })}</p>
+                <h2 className="text-3xl font-bold text-stone-800 dark:text-dark-text-primary mb-2">{t('dashboard.title')}</h2>
+                <p className="text-stone-500 dark:text-dark-text-secondary">{t('dashboard.subtitle', { count: recipes.length })}</p>
               </div>
               <Button onClick={() => setView('CREATE_RECIPE')}>
                 <Plus size={20} /> {t('dashboard.newRecipe')}
@@ -238,12 +240,12 @@ const App: React.FC = () => {
             </div>
 
             {recipes.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-stone-200">
-                <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-4 text-stone-300">
+              <div className="text-center py-20 bg-white dark:bg-dark-bg-secondary rounded-3xl border-2 border-dashed border-stone-200 dark:border-dark-border-primary">
+                <div className="w-20 h-20 bg-stone-50 dark:bg-dark-bg-tertiary rounded-full flex items-center justify-center mx-auto mb-4 text-stone-300 dark:text-dark-text-tertiary">
                   <UtensilsCrossed size={40} />
                 </div>
-                <h3 className="text-lg font-bold text-stone-600 mb-2">{t('dashboard.noRecipes')}</h3>
-                <p className="text-stone-400 mb-6 max-w-xs mx-auto" dangerouslySetInnerHTML={{ __html: t('dashboard.noRecipesDesc') }} />
+                <h3 className="text-lg font-bold text-stone-600 dark:text-dark-text-secondary mb-2">{t('dashboard.noRecipes')}</h3>
+                <p className="text-stone-400 dark:text-dark-text-tertiary mb-6 max-w-xs mx-auto" dangerouslySetInnerHTML={{ __html: t('dashboard.noRecipesDesc') }} />
                 <Button onClick={() => setView('CREATE_RECIPE')}>{t('dashboard.createRecipe')}</Button>
               </div>
             ) : (

@@ -13,11 +13,11 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
   const currentVersion = recipe.versions[recipe.versions.length - 1];
 
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="group bg-white rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full"
+      className="group bg-white dark:bg-dark-bg-secondary rounded-xl shadow-sm border border-stone-100 dark:border-dark-border-primary hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full"
     >
-      <div className="relative h-48 overflow-hidden bg-stone-200">
+      <div className="relative h-48 overflow-hidden bg-stone-200 dark:bg-dark-bg-tertiary">
         <img
           src={recipe.imageUrl || `https://picsum.photos/seed/${recipe.id}/400/300`}
           alt={recipe.title}
@@ -29,12 +29,12 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
       </div>
       
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-lg font-bold text-stone-800 mb-1 group-hover:text-amber-600 transition-colors">
+        <h3 className="text-lg font-bold text-stone-800 dark:text-dark-text-primary mb-1 group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">
           {recipe.title}
         </h3>
-        <p className="text-xs text-stone-500 mb-3">{t('recipe.by', { author: recipe.authorName })}</p>
+        <p className="text-xs text-stone-500 dark:text-dark-text-tertiary mb-3">{t('recipe.by', { author: recipe.authorName })}</p>
 
-        <div className="mt-auto flex items-center justify-between text-stone-500 text-sm">
+        <div className="mt-auto flex items-center justify-between text-stone-500 dark:text-dark-text-secondary text-sm">
           <div className="flex items-center gap-1">
             <Clock size={14} />
             <span>{recipe.updatedAt.toDate().toLocaleDateString()}</span>

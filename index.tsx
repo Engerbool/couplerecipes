@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 import App from './App';
 import i18n from './config/i18n';
 
@@ -12,8 +13,10 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <I18nextProvider i18n={i18n}>
-      <App />
-    </I18nextProvider>
+    <DarkModeProvider>
+      <I18nextProvider i18n={i18n}>
+        <App />
+      </I18nextProvider>
+    </DarkModeProvider>
   </React.StrictMode>
 );

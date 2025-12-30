@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-stone-100 dark:bg-dark-bg-tertiary;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-amber-400 dark:bg-amber-600 rounded;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-amber-500;
+  }
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.font-gowun {
+  font-family: 'Gowun Batang', serif;
+}

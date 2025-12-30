@@ -55,22 +55,22 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-dark-bg-secondary rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
+          className="absolute top-4 right-4 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary transition-colors"
         >
           <X size={24} />
         </button>
 
         {mode === 'choice' && (
           <div className="text-center">
-            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <UserPlus size={32} className="text-amber-600" />
+            <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <UserPlus size={32} className="text-amber-600 dark:text-amber-500" />
             </div>
-            <h2 className="text-2xl font-bold text-stone-800 mb-2">{t('partner.connectWithPartner')}</h2>
-            <p className="text-stone-500 mb-8">{t('partner.shareRecipes')}</p>
+            <h2 className="text-2xl font-bold text-stone-800 dark:text-dark-text-primary mb-2">{t('partner.connectWithPartner')}</h2>
+            <p className="text-stone-500 dark:text-dark-text-secondary mb-8">{t('partner.shareRecipes')}</p>
 
             <div className="space-y-3">
               <Button
@@ -90,7 +90,7 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
             </div>
 
             {error && (
-              <div className="mt-4 bg-red-50 text-red-600 text-sm p-3 rounded-lg">
+              <div className="mt-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm p-3 rounded-lg">
                 {error}
               </div>
             )}
@@ -99,11 +99,11 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
 
         {mode === 'create' && (
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-stone-800 mb-4">{t('partner.yourInviteCode')}</h2>
-            <p className="text-stone-500 mb-6">{t('partner.shareThisCode')}</p>
+            <h2 className="text-2xl font-bold text-stone-800 dark:text-dark-text-primary mb-4">{t('partner.yourInviteCode')}</h2>
+            <p className="text-stone-500 dark:text-dark-text-secondary mb-6">{t('partner.shareThisCode')}</p>
 
-            <div className="bg-stone-50 rounded-xl p-6 mb-6">
-              <div className="text-4xl font-bold text-amber-600 tracking-widest mb-4">
+            <div className="bg-stone-50 dark:bg-dark-bg-tertiary rounded-xl p-6 mb-6">
+              <div className="text-4xl font-bold text-amber-600 dark:text-amber-500 tracking-widest mb-4">
                 {inviteCode}
               </div>
               <Button
@@ -123,7 +123,7 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
               </Button>
             </div>
 
-            <p className="text-xs text-stone-400">
+            <p className="text-xs text-stone-400 dark:text-dark-text-tertiary">
               {t('partner.codeExpires')}
             </p>
           </div>
@@ -131,8 +131,8 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
 
         {mode === 'join' && (
           <div>
-            <h2 className="text-2xl font-bold text-stone-800 mb-4">{t('partner.enterInviteCode')}</h2>
-            <p className="text-stone-500 mb-6">
+            <h2 className="text-2xl font-bold text-stone-800 dark:text-dark-text-primary mb-4">{t('partner.enterInviteCode')}</h2>
+            <p className="text-stone-500 dark:text-dark-text-secondary mb-6">
               {t('partner.askForCode')}
             </p>
 
@@ -143,13 +143,13 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
                 setInputCode(e.target.value.replace(/\D/g, '').slice(0, 6))
               }
               placeholder="000000"
-              className="w-full px-4 py-3 text-center text-2xl tracking-widest rounded-xl border border-stone-200 focus:ring-2 focus:ring-amber-500 outline-none mb-4"
+              className="w-full px-4 py-3 text-center text-2xl tracking-widest rounded-xl border border-stone-200 dark:border-dark-border-primary focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none mb-4 bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
               maxLength={6}
               autoFocus
             />
 
             {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm p-3 rounded-lg mb-4">
                 {error}
               </div>
             )}

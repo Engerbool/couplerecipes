@@ -13,7 +13,7 @@ export const LanguageToggle: React.FC = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-stone-600 hover:text-amber-600 transition-colors rounded-lg hover:bg-stone-50"
+      className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-stone-600 dark:text-dark-text-secondary hover:text-amber-600 dark:hover:text-amber-500 transition-colors rounded-lg hover:bg-stone-50 dark:hover:bg-dark-bg-tertiary"
       title="Change Language"
     >
       <Languages size={16} />

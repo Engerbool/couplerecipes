@@ -24,7 +24,7 @@ export const PartnerBadge: React.FC<Props> = ({ partnerId }) => {
   if (!partnerName) return null;
 
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm">
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-full text-sm border border-emerald-200 dark:border-emerald-800">
       <Users size={14} />
       <span>{t('nav.connectedWith', { name: partnerName })}</span>
     </div>
