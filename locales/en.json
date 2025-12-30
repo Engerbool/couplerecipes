@@ -8,7 +8,9 @@
   "auth": {
     "signInWithGoogle": "Sign in with Google",
     "loading": "Loading...",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutConfirm": "Sign out?",
+    "logoutMessage": "You can always sign back in to access your recipes."
   },
   "nav": {
     "invitePartner": "Invite Partner",

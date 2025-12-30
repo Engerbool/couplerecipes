@@ -11,6 +11,7 @@ import { Button } from './components/Button';
 import { PartnerInviteModal } from './components/PartnerInviteModal';
 import { PartnerBadge } from './components/PartnerBadge';
 import { DisconnectModal } from './components/DisconnectModal';
+import { LogoutModal } from './components/LogoutModal';
 import { LanguageToggle } from './components/LanguageToggle';
 import { DarkModeToggle } from './components/DarkModeToggle';
 import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX } from 'lucide-react';
@@ -23,6 +24,7 @@ const App: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [partnerName, setPartnerName] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -92,6 +94,7 @@ const App: React.FC = () => {
       await logout();
       setCurrentUser(null);
       setView('DASHBOARD');
+      setShowLogoutModal(false);
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -216,7 +219,7 @@ const App: React.FC = () => {
                 <UserIcon size={18} />
               </div>
             )}
-            <button onClick={handleLogout} className="text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400 transition-colors ml-2" title={t('auth.logout')}>
+            <button onClick={() => setShowLogoutModal(true)} className="text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400 transition-colors ml-2" title={t('auth.logout')}>
               <LogOut size={18} />
             </button>
           </div>
@@ -316,6 +319,14 @@ const App: React.FC = () => {
           partnerName={partnerName}
           onClose={() => setShowDisconnectModal(false)}
           onSuccess={handleDisconnectSuccess}
+        />
+      )}
+
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <LogoutModal
+          onClose={() => setShowLogoutModal(false)}
+          onConfirm={handleLogout}
         />
       )}
     </div>
