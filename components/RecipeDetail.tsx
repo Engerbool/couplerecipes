@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Timestamp } from 'firebase/firestore';
 import { Recipe, User, Comment } from '../types';
 import { Button } from './Button';
-import { ArrowLeft, GitBranch, MessageSquare, Star, Send, ChefHat, MonitorPlay, CheckCircle2, Circle, X } from 'lucide-react';
+import { ArrowLeft, GitBranch, MessageSquare, Star, Send, ChefHat, MonitorPlay, CheckCircle2, Circle, X, User as UserIcon } from 'lucide-react';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -47,6 +47,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
       id: crypto.randomUUID(),
       userId: currentUser.id,
       userName: currentUser.name,
+      userPhotoURL: currentUser.photoURL,
       text: newComment,
       timestamp: Timestamp.fromMillis(Date.now()),
       rating
@@ -348,17 +349,32 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                 ) : (
                   activeVersion.comments.map(comment => (
                     <div key={comment.id} className="bg-white dark:bg-dark-bg-secondary p-3 rounded-xl border border-stone-100 dark:border-dark-border-primary shadow-sm">
-                      <div className="flex justify-between items-start mb-1">
-                        <span className="font-bold text-sm text-stone-800 dark:text-dark-text-primary">{comment.userName}</span>
-                        <div className="flex text-amber-400">
-                          {[...Array(comment.rating)].map((_, i) => (
-                            <Star key={i} size={10} fill="currentColor" />
-                          ))}
+                      <div className="flex gap-3">
+                        {comment.userPhotoURL ? (
+                          <img
+                            src={comment.userPhotoURL}
+                            alt={comment.userName}
+                            className="w-8 h-8 rounded-full flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                            <UserIcon size={16} className="text-amber-600 dark:text-amber-500" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-bold text-sm text-stone-800 dark:text-dark-text-primary">{comment.userName}</span>
+                            <div className="flex text-amber-400">
+                              {[...Array(comment.rating)].map((_, i) => (
+                                <Star key={i} size={10} fill="currentColor" />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-stone-600 dark:text-dark-text-secondary text-sm mb-2">{comment.text}</p>
+                          <div className="text-xs text-stone-400 dark:text-dark-text-tertiary text-right">
+                            {comment.timestamp.toDate().toLocaleDateString()}
+                          </div>
                         </div>
-                      </div>
-                      <p className="text-stone-600 dark:text-dark-text-secondary text-sm mb-2">{comment.text}</p>
-                      <div className="text-xs text-stone-400 dark:text-dark-text-tertiary text-right">
-                        {comment.timestamp.toDate().toLocaleDateString()}
                       </div>
                     </div>
                   ))

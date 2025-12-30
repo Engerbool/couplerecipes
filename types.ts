@@ -35,6 +35,7 @@ export interface Comment {
   id: string;
   userId: string;
   userName: string;
+  userPhotoURL: string | null;
   text: string;
   timestamp: Timestamp;          // number → Timestamp
   rating?: number; // 1-5 stars
