@@ -44,7 +44,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
 
         setIngredients(loadedIngredients.length > 0 ? loadedIngredients : [{ name: '', amount: '' }]);
         setSteps(lastVer.steps.length > 0 ? [...lastVer.steps] : ['']);
-        setNotes(`Notes for v${lastVer.versionNumber + 1}: `);
+        setNotes('');
       }
     }
   }, [existingRecipe, isNewVersion]);
