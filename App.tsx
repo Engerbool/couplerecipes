@@ -227,13 +227,13 @@ const App: React.FC = () => {
       <main className="container mx-auto px-4 py-8">
         {view === 'DASHBOARD' && (
           <>
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex justify-between items-end mb-4 md:mb-6">
               <div>
-                <h2 className="text-3xl font-bold text-stone-800 dark:text-dark-text-primary mb-2">{t('dashboard.title')}</h2>
-                <p className="text-stone-500 dark:text-dark-text-secondary">{t('dashboard.subtitle', { count: recipes.length })}</p>
+                <h2 className="text-xl md:text-2xl font-bold text-stone-800 dark:text-dark-text-primary mb-1">{t('dashboard.title')}</h2>
+                <p className="text-sm text-stone-500 dark:text-dark-text-secondary">{t('dashboard.subtitle', { count: recipes.length })}</p>
               </div>
-              <Button onClick={() => setView('CREATE_RECIPE')}>
-                <Plus size={20} /> {t('dashboard.newRecipe')}
+              <Button onClick={() => setView('CREATE_RECIPE')} className="flex-shrink-0">
+                <Plus size={20} /> <span className="hidden sm:inline">{t('dashboard.newRecipe')}</span>
               </Button>
             </div>
 
