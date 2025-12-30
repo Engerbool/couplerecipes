@@ -3,14 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Recipe, User, ViewState } from './types';
 import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser } from './services/authService';
 import { getRecipesByPartnership, saveRecipe, deleteRecipe } from './services/recipeService';
+import { getPartner } from './services/partnershipService';
 import { RecipeCard } from './components/RecipeCard';
 import { RecipeEditor } from './components/RecipeEditor';
 import { RecipeDetail } from './components/RecipeDetail';
 import { Button } from './components/Button';
 import { PartnerInviteModal } from './components/PartnerInviteModal';
 import { PartnerBadge } from './components/PartnerBadge';
+import { DisconnectModal } from './components/DisconnectModal';
 import { LanguageToggle } from './components/LanguageToggle';
-import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2 } from 'lucide-react';
+import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX } from 'lucide-react';
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -19,6 +21,8 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('DASHBOARD');
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
+  const [partnerName, setPartnerName] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
 
   // Firebase Auth State Listener
@@ -48,6 +52,26 @@ const App: React.FC = () => {
 
     loadRecipes();
   }, [currentUser]);
+
+  // Load partner name when partnerId changes
+  useEffect(() => {
+    const loadPartner = async () => {
+      if (currentUser?.partnerId) {
+        try {
+          const partner = await getPartner(currentUser.partnerId);
+          if (partner) {
+            setPartnerName(partner.displayName || partner.email);
+          }
+        } catch (error) {
+          console.error('Failed to load partner:', error);
+        }
+      } else {
+        setPartnerName('');
+      }
+    };
+
+    loadPartner();
+  }, [currentUser?.partnerId]);
 
   const handleGoogleLogin = async () => {
     try {
@@ -101,6 +125,13 @@ const App: React.FC = () => {
     setShowInviteModal(false);
   };
 
+  const handleDisconnectSuccess = async () => {
+    const updatedUser = await getCurrentUser();
+    setCurrentUser(updatedUser);
+    setRecipes([]);
+    setShowDisconnectModal(false);
+  };
+
   // --- Views ---
 
   if (authLoading) {
@@ -151,7 +182,16 @@ const App: React.FC = () => {
         <div className="flex items-center gap-4">
           <LanguageToggle />
           {currentUser?.partnerId ? (
-            <PartnerBadge partnerId={currentUser.partnerId} />
+            <>
+              <PartnerBadge partnerId={currentUser.partnerId} />
+              <Button
+                variant="ghost"
+                onClick={() => setShowDisconnectModal(true)}
+                className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <UserX size={16} /> <span className="hidden sm:inline">{t('partner.disconnect')}</span>
+              </Button>
+            </>
           ) : (
             <Button
               variant="ghost"
@@ -266,6 +306,17 @@ const App: React.FC = () => {
           userId={currentUser.id}
           onClose={() => setShowInviteModal(false)}
           onSuccess={handleInviteSuccess}
+        />
+      )}
+
+      {/* Disconnect Modal */}
+      {showDisconnectModal && currentUser && currentUser.partnershipId && (
+        <DisconnectModal
+          userId={currentUser.id}
+          partnershipId={currentUser.partnershipId}
+          partnerName={partnerName}
+          onClose={() => setShowDisconnectModal(false)}
+          onSuccess={handleDisconnectSuccess}
         />
       )}
     </div>
