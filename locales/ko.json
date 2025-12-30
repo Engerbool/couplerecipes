@@ -19,7 +19,7 @@
     "subtitle": "함께 완성해가는 {{count}}개의 요리",
     "newRecipe": "새 레시피",
     "noRecipes": "아직 레시피가 없습니다",
-    "noRecipesDesc": "우리를 정의하는 첫 번째 요리는 무엇일까요?<br/>함께하는 메뉴를 만들어보세요.",
+    "noRecipesDesc": "우리만의 첫 번째 요리는 무엇일까요?<br/>함께하는 메뉴를 만들어보세요.",
     "createRecipe": "레시피 만들기"
   },
   "recipe": {
