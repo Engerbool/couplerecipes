@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "커플레시피",
+    "tagline": "우리 둘만의 완벽한 맛을 찾아가는 여정",
+    "subtitle": "함께 만들고, 공유하고, 발전시키는 우리만의 레시피",
+    "footer": "요리사가 되는 것이 아니라,<br/>우리가 함께 좋아하는 음식을 발견하는 것입니다."
+  },
+  "auth": {
+    "signInWithGoogle": "구글 계정으로 시작하기",
+    "loading": "로딩 중...",
+    "logout": "로그아웃"
+  },
+  "nav": {
+    "invitePartner": "파트너 초대",
+    "connectedWith": "{{name}}님과 연결됨"
+  },
+  "dashboard": {
+    "title": "우리의 레시피",
+    "subtitle": "함께 완성해가는 {{count}}개의 요리",
+    "newRecipe": "새 레시피",
+    "noRecipes": "아직 레시피가 없습니다",
+    "noRecipesDesc": "우리를 정의하는 첫 번째 요리는 무엇일까요?<br/>함께하는 메뉴를 만들어보세요.",
+    "createRecipe": "레시피 만들기"
+  },
+  "recipe": {
+    "by": "{{author}} 작성",
+    "ingredients": "재료",
+    "instructions": "조리법",
+    "feedback": "피드백",
+    "noFeedback": "아직 피드백이 없습니다.<br/>이 버전을 처음으로 평가해보세요!",
+    "edit": "수정",
+    "upgrade": "수정 / 업그레이드",
+    "createVersion": "버전 {{version}} 만들기",
+    "wantToImprove": "이 레시피를 개선하고 싶으신가요?",
+    "versionHistory": "버전 기록",
+    "cookingMode": "요리 모드",
+    "startCooking": "요리 시작",
+    "exitCooking": "나가기",
+    "ingredientsCheck": "재료 확인",
+    "step": "단계 {{number}}",
+    "bonAppetit": "맛있게 드세요!",
+    "completed": "레시피를 완성했습니다.",
+    "finishCooking": "요리 완료",
+    "back": "뒤로"
+  },
+  "editor": {
+    "newRecipe": "새 레시피",
+    "editRecipe": "레시피 수정",
+    "upgrade": "업그레이드: {{title}}",
+    "recipeTitle": "레시피 이름",
+    "titlePlaceholder": "예: 엄마표 스파게티",
+    "coverImage": "대표 이미지",
+    "uploadPhoto": "사진 업로드",
+    "imageRecommendation": "권장: 정사각형 또는 가로형",
+    "ingredientsCount": "{{count}}개 항목",
+    "ingredientName": "재료명",
+    "amount": "분량",
+    "addIngredient": "재료 추가",
+    "instructionsCount": "{{count}}개 단계",
+    "stepPlaceholder": "{{number}}단계 상세 내용...",
+    "moveUp": "위로 이동",
+    "moveDown": "아래로 이동",
+    "delete": "삭제",
+    "addStep": "단계 추가",
+    "versionNotes": "버전 노트 / 변경사항",
+    "notesPlaceholder": "예: 소금을 더 추가, 조리 시간 단축...",
+    "cancel": "취소",
+    "save": "저장",
+    "publishVersion": "새 버전 발행",
+    "createRecipe": "레시피 만들기"
+  },
+  "partner": {
+    "connectWithPartner": "파트너와 연결",
+    "shareRecipes": "특별한 한 사람과 레시피를 공유하세요",
+    "createInviteCode": "초대 코드 생성",
+    "iHaveCode": "코드가 있어요",
+    "yourInviteCode": "초대 코드",
+    "shareThisCode": "이 코드를 파트너와 공유하세요",
+    "copyCode": "코드 복사",
+    "copied": "복사됨!",
+    "codeExpires": "이 코드는 사용되면 만료됩니다",
+    "enterInviteCode": "초대 코드 입력",
+    "askForCode": "파트너에게 6자리 코드를 받으세요",
+    "back": "뒤로",
+    "connect": "연결하기",
+    "connecting": "연결 중...",
+    "alreadyHavePartner": "이미 파트너가 있습니다",
+    "invalidCode": "유효하지 않은 초대 코드입니다",
+    "cannotInviteSelf": "자기 자신을 초대할 수 없습니다",
+    "createCodeFailed": "초대 코드 생성에 실패했습니다",
+    "joinFailed": "파트너 연결에 실패했습니다"
+  },
+  "comment": {
+    "howDidItTaste": "어떤 맛이었나요?",
+    "rating": "평점"
+  },
+  "common": {
+    "pleaseConnectPartner": "먼저 파트너와 연결해주세요",
+    "failedToSave": "레시피 저장에 실패했습니다",
+    "failedToLoad": "레시피 로드에 실패했습니다",
+    "atLeastOneIngredient": "최소 하나의 재료와 단계를 추가해주세요."
+  }
+}

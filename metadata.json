@@ -1,0 +1,8 @@
+{
+  "name": "CoupleRecipes - Recipe Lab",
+  "description": "A collaborative recipe sharing app for couples to evolve their dishes through versioning and feedback.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

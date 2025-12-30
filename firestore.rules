@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getPartnership(partnershipId) {
+      return get(/databases/$(database)/documents/partnerships/$(partnershipId));
+    }
+
+    function isPartnershipMember(partnershipId) {
+      return isAuthenticated() &&
+             request.auth.uid in getPartnership(partnershipId).data.users;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow read: if isAuthenticated() &&
+                     get(/databases/$(database)/documents/users/$(userId)).data.partnerId == request.auth.uid;
+    }
+
+    // Partnerships Collection
+    match /partnerships/{partnershipId} {
+      allow read: if isPartnershipMember(partnershipId);
+      allow create: if isAuthenticated() && request.resource.data.createdBy == request.auth.uid;
+      allow update: if isPartnershipMember(partnershipId);
+      allow delete: if false;
+    }
+
+    // Recipes Collection
+    match /recipes/{recipeId} {
+      allow read, write: if isAuthenticated() &&
+                            isPartnershipMember(resource.data.partnershipId);
+
+      match /versions/{versionId} {
+        allow read, write: if isAuthenticated() &&
+                              isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
+
+        match /comments/{commentId} {
+          allow read: if isAuthenticated() &&
+                         isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
+          allow create: if isAuthenticated() &&
+                           isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
+          allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+        }
+      }
+    }
+  }
+}

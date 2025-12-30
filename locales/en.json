@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "CoupleRecipes",
+    "tagline": "Finding the perfect taste for the two of us.",
+    "subtitle": "Record, share, and evolve our unique recipes.",
+    "footer": "It's not about becoming a chef.<br/>It's about discovering what we love to eat together."
+  },
+  "auth": {
+    "signInWithGoogle": "Sign in with Google",
+    "loading": "Loading...",
+    "logout": "Logout"
+  },
+  "nav": {
+    "invitePartner": "Invite Partner",
+    "connectedWith": "Connected with {{name}}"
+  },
+  "dashboard": {
+    "title": "Our Recipes",
+    "subtitle": "Perfecting {{count}} dishes together.",
+    "newRecipe": "New Recipe",
+    "noRecipes": "No recipes yet",
+    "noRecipesDesc": "What is the first dish that defines us?<br/>Start building our shared menu.",
+    "createRecipe": "Create Recipe"
+  },
+  "recipe": {
+    "by": "by {{author}}",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "feedback": "Feedback",
+    "noFeedback": "No feedback yet.<br/>Be the first to rate this version!",
+    "edit": "Edit",
+    "upgrade": "Edit / Upgrade",
+    "createVersion": "Create Version {{version}}",
+    "wantToImprove": "Want to improve this recipe?",
+    "versionHistory": "Version History",
+    "cookingMode": "Cooking Mode",
+    "startCooking": "Start Cooking",
+    "exitCooking": "Exit",
+    "ingredientsCheck": "Ingredients Check",
+    "step": "Step {{number}}",
+    "bonAppetit": "Bon Appétit!",
+    "completed": "You've completed this recipe.",
+    "finishCooking": "Finish Cooking",
+    "back": "Back"
+  },
+  "editor": {
+    "newRecipe": "New Recipe",
+    "editRecipe": "Edit Recipe",
+    "upgrade": "Upgrade: {{title}}",
+    "recipeTitle": "Recipe Title",
+    "titlePlaceholder": "e.g., Mom's Spaghetti",
+    "coverImage": "Cover Image",
+    "uploadPhoto": "Upload Photo",
+    "imageRecommendation": "Recommended: Square or Landscape",
+    "ingredientsCount": "{{count}} items",
+    "ingredientName": "Ingredient Name",
+    "amount": "Amount",
+    "addIngredient": "Add Ingredient",
+    "instructionsCount": "{{count}} steps",
+    "stepPlaceholder": "Step {{number}} details...",
+    "moveUp": "Move Up",
+    "moveDown": "Move Down",
+    "delete": "Delete",
+    "addStep": "Add Step",
+    "versionNotes": "Version Notes / Changes",
+    "notesPlaceholder": "e.g., Added more salt, reduced cooking time...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "publishVersion": "Publish New Version",
+    "createRecipe": "Create Recipe"
+  },
+  "partner": {
+    "connectWithPartner": "Connect with Partner",
+    "shareRecipes": "Share recipes with one special person",
+    "createInviteCode": "Create Invite Code",
+    "iHaveCode": "I Have a Code",
+    "yourInviteCode": "Your Invite Code",
+    "shareThisCode": "Share this code with your partner",
+    "copyCode": "Copy Code",
+    "copied": "Copied!",
+    "codeExpires": "This code will expire once someone uses it",
+    "enterInviteCode": "Enter Invite Code",
+    "askForCode": "Ask your partner for their 6-digit code",
+    "back": "Back",
+    "connect": "Connect",
+    "connecting": "Connecting...",
+    "alreadyHavePartner": "You already have a partner",
+    "invalidCode": "Invalid invite code",
+    "cannotInviteSelf": "You cannot invite yourself",
+    "createCodeFailed": "Failed to create invite code",
+    "joinFailed": "Failed to connect with partner"
+  },
+  "comment": {
+    "howDidItTaste": "How did it taste?",
+    "rating": "Rating"
+  },
+  "common": {
+    "pleaseConnectPartner": "Please connect with a partner first",
+    "failedToSave": "Failed to save recipe",
+    "failedToLoad": "Failed to load recipes",
+    "atLeastOneIngredient": "Please add at least one ingredient and one step."
+  }
+}
