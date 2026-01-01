@@ -32,6 +32,8 @@
     "noFeedback": "No feedback yet.<br/>Be the first to rate this version!",
     "edit": "Edit",
     "upgrade": "Upgrade",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this recipe? All versions and feedback will be deleted.",
     "createVersion": "Create Version {{version}}",
     "wantToImprove": "Want to improve this recipe?",
     "versionHistory": "Version History",

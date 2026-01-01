@@ -12,6 +12,7 @@ interface RecipeDetailProps {
   onUpdateRecipe: (updatedRecipe: Recipe) => void;
   onEditClick: (recipe: Recipe) => void;
   onUpgradeClick: (recipe: Recipe) => void;
+  onDelete: (recipeId: string) => void;
 }
 
 export const RecipeDetail: React.FC<RecipeDetailProps> = ({
@@ -20,7 +21,8 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
   onBack,
   onUpdateRecipe,
   onEditClick,
-  onUpgradeClick
+  onUpgradeClick,
+  onDelete
 }) => {
   const { t } = useTranslation();
   const [activeVersionIndex, setActiveVersionIndex] = useState(recipe.versions.length - 1);
@@ -532,6 +534,17 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     className="w-full justify-center border-2 border-amber-500 dark:border-amber-600 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700"
                   >
                     <GitBranch size={16} /> {t('recipe.upgrade')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (window.confirm(t('recipe.deleteConfirm'))) {
+                        onDelete(recipe.id);
+                      }
+                    }}
+                    variant="secondary"
+                    className="w-full justify-center border-2 border-red-500 dark:border-red-600 bg-red-500 dark:bg-red-600 text-white hover:bg-red-600 dark:hover:bg-red-700"
+                  >
+                    <Trash2 size={16} /> {t('recipe.delete')}
                   </Button>
                 </div>
               </div>

@@ -145,6 +145,29 @@ const App: React.FC = () => {
     setView('UPGRADE_VERSION');
   };
 
+  const handleDeleteRecipe = async (recipeId: string) => {
+    if (!currentUser) return;
+
+    try {
+      await deleteRecipe(recipeId);
+
+      // 레시피 목록 새로고침
+      const updatedRecipes = await getRecipesByUser(
+        currentUser.id,
+        currentUser.partnershipId,
+        currentUser.pastPartnershipIds
+      );
+      setRecipes(updatedRecipes);
+
+      // 대시보드로 돌아가기
+      setView('DASHBOARD');
+      setSelectedRecipe(null);
+    } catch (error) {
+      console.error('Failed to delete recipe:', error);
+      alert('Failed to delete recipe');
+    }
+  };
+
   const handleInviteSuccess = async () => {
     try {
       // Firestore 배치 커밋 전파 대기
@@ -438,6 +461,7 @@ const App: React.FC = () => {
             }}
             onEditClick={handleEditRecipeClick}
             onUpgradeClick={handleUpgradeRecipeClick}
+            onDelete={handleDeleteRecipe}
           />
         )}
       </main>
