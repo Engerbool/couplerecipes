@@ -124,9 +124,14 @@ const App: React.FC = () => {
       setRecipes(updatedRecipes);
       setView('DASHBOARD');
       setSelectedRecipe(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save recipe:', error);
-      alert('Failed to save recipe');
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        stack: error?.stack
+      });
+      alert(`Failed to save recipe: ${error?.message || 'Unknown error'}`);
     }
   };
 

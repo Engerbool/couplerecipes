@@ -62,9 +62,50 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 이미지 리사이징 (모바일 대용량 사진 대응)
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result as string);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // 최대 크기 설정 (800px - Firestore 1MB 제한 고려)
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+
+          let width = img.width;
+          let height = img.height;
+
+          // 비율 유지하면서 리사이징
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = (height * MAX_WIDTH) / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = (width * MAX_HEIGHT) / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // JPEG 품질 0.7로 압축 (Firestore 크기 제한 대응)
+          const resizedImage = canvas.toDataURL('image/jpeg', 0.7);
+
+          // 이미지 크기 로깅
+          const originalSize = ((reader.result as string).length * 0.75) / 1024; // KB
+          const resizedSize = (resizedImage.length * 0.75) / 1024; // KB
+          console.log(`Image resized: ${originalSize.toFixed(2)}KB → ${resizedSize.toFixed(2)}KB`);
+
+          setImage(resizedImage);
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
