@@ -146,9 +146,17 @@ const App: React.FC = () => {
   };
 
   const handleInviteSuccess = async () => {
-    const updatedUser = await getCurrentUser();
-    setCurrentUser(updatedUser);
-    setShowInviteModal(false);
+    try {
+      // Firestore 배치 커밋 전파 대기
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const updatedUser = await getCurrentUser();
+      setCurrentUser(updatedUser);
+    } catch (error) {
+      console.error('Failed to refresh user after invite:', error);
+    } finally {
+      setShowInviteModal(false);
+    }
   };
 
   const handleDisconnectSuccess = async () => {
