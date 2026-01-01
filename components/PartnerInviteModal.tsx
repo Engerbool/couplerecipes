@@ -40,6 +40,14 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleClose = () => {
+    // 초대 코드 생성 후 모달 닫을 때 상태 업데이트
+    if (mode === 'create') {
+      onSuccess();
+    }
+    onClose();
+  };
+
   const handleJoin = async () => {
     try {
       setLoading(true);
@@ -58,7 +66,7 @@ export const PartnerInviteModal: React.FC<Props> = ({ userId, onClose, onSuccess
     <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-dark-bg-secondary rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary transition-colors"
         >
           <X size={24} />
