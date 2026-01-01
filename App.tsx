@@ -291,32 +291,30 @@ const App: React.FC = () => {
                 variant="ghost"
                 onClick={() => setShowDisconnectModal(true)}
                 className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-900/20"
+                title={t('partner.disconnect')}
               >
-                <UserX size={16} /> <span className="hidden sm:inline">{t('partner.disconnect')}</span>
+                <UserX size={16} />
               </Button>
             </>
           ) : currentUser?.partnershipId ? (
             // Pending 상태: 초대 코드 생성했지만 아직 참여 없음
-            <>
-              <span className="text-sm text-stone-500 dark:text-dark-text-secondary hidden sm:inline">
-                {t('partner.waitingForPartner')}
-              </span>
-              <Button
-                variant="ghost"
-                onClick={() => setShowCancelInviteModal(true)}
-                className="text-sm text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-500 dark:hover:bg-amber-900/20"
-              >
-                <X size={16} /> <span className="hidden sm:inline">{t('partner.cancelInvite')}</span>
-              </Button>
-            </>
+            <Button
+              variant="ghost"
+              onClick={() => setShowCancelInviteModal(true)}
+              className="text-sm text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-500 dark:hover:bg-amber-900/20"
+              title={t('partner.cancelInvite')}
+            >
+              <X size={16} />
+            </Button>
           ) : (
             // 파트너 없음
             <Button
               variant="ghost"
               onClick={() => setShowInviteModal(true)}
-              className="hidden sm:flex text-sm"
+              className="text-sm"
+              title={t('nav.invitePartner')}
             >
-              <Share2 size={16} /> {t('nav.invitePartner')}
+              <Share2 size={16} />
             </Button>
           )}
           <div className="flex items-center gap-3 pl-4 border-l border-stone-200 dark:border-dark-border-primary">

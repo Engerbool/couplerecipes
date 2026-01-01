@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Languages } from 'lucide-react';
 
 export const LanguageToggle: React.FC = () => {
   const { i18n } = useTranslation();
@@ -13,11 +12,10 @@ export const LanguageToggle: React.FC = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-stone-600 dark:text-dark-text-secondary hover:text-amber-600 dark:hover:text-amber-500 transition-colors rounded-lg hover:bg-stone-50 dark:hover:bg-dark-bg-tertiary"
-      title="Change Language"
+      className="flex items-center justify-center w-8 h-8 text-2xl hover:scale-110 transition-transform rounded-lg hover:bg-stone-50 dark:hover:bg-dark-bg-tertiary"
+      title={i18n.language === 'ko' ? 'Switch to English' : '한국어로 전환'}
     >
-      <Languages size={16} />
-      <span className="font-bold">{i18n.language.toUpperCase()}</span>
+      {i18n.language === 'ko' ? '🇰🇷' : '🇺🇸'}
     </button>
   );
 };
