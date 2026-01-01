@@ -114,6 +114,14 @@
     "edit": "닉네임 변경",
     "editSuccess": "닉네임이 변경되었습니다"
   },
+  "profile": {
+    "edit": "프로필 수정",
+    "photoLabel": "프로필 사진",
+    "googlePhoto": "구글 사진",
+    "uploadPhoto": "사진 업로드",
+    "avatarPhoto": "캐릭터",
+    "clickToUpload": "클릭하여 업로드"
+  },
   "comment": {
     "howDidItTaste": "어떤 맛이었나요?",
     "rating": "평점",

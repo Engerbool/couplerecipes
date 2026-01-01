@@ -28,6 +28,7 @@ export const signInWithGoogle = async (): Promise<User> => {
       uid: firebaseUser.uid,
       ...userData,
       nickname: null,  // 닉네임은 나중에 설정
+      customPhotoURL: null,  // 커스텀 프로필 사진은 나중에 설정
       partnerId: null,
       partnershipId: null,
       createdAt: serverTimestamp(),
@@ -82,6 +83,7 @@ const convertFirebaseUserToUser = (fbUser: FirebaseUser): User => ({
   nickname: fbUser.nickname || null,
   email: fbUser.email,
   photoURL: fbUser.photoURL,
+  customPhotoURL: fbUser.customPhotoURL || null,
   partnerId: fbUser.partnerId,
   partnershipId: fbUser.partnershipId,
 });
@@ -89,4 +91,9 @@ const convertFirebaseUserToUser = (fbUser: FirebaseUser): User => ({
 export const updateNickname = async (userId: string, nickname: string): Promise<void> => {
   const userRef = doc(db, 'users', userId);
   await updateDoc(userRef, { nickname });
+};
+
+export const updateProfile = async (userId: string, nickname: string, customPhotoURL: string | null): Promise<void> => {
+  const userRef = doc(db, 'users', userId);
+  await updateDoc(userRef, { nickname, customPhotoURL });
 };

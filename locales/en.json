@@ -114,6 +114,14 @@
     "edit": "Change Nickname",
     "editSuccess": "Nickname updated successfully"
   },
+  "profile": {
+    "edit": "Edit Profile",
+    "photoLabel": "Profile Photo",
+    "googlePhoto": "Google Photo",
+    "uploadPhoto": "Upload Photo",
+    "avatarPhoto": "Avatar",
+    "clickToUpload": "Click to upload"
+  },
   "comment": {
     "howDidItTaste": "How did it taste?",
     "rating": "Rating",

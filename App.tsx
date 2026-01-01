@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Recipe, User, ViewState } from './types';
-import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser, updateNickname } from './services/authService';
+import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser, updateProfile } from './services/authService';
 import { getRecipesByPartnership, saveRecipe, deleteRecipe } from './services/recipeService';
 import { getPartner } from './services/partnershipService';
 import { RecipeCard } from './components/RecipeCard';
@@ -12,8 +12,7 @@ import { PartnerInviteModal } from './components/PartnerInviteModal';
 import { PartnerBadge } from './components/PartnerBadge';
 import { DisconnectModal } from './components/DisconnectModal';
 import { LogoutModal } from './components/LogoutModal';
-import { NicknameSetupModal } from './components/NicknameSetupModal';
-import { NicknameEditModal } from './components/NicknameEditModal';
+import { ProfileSetupModal } from './components/ProfileSetupModal';
 import { LanguageToggle } from './components/LanguageToggle';
 import { DarkModeToggle } from './components/DarkModeToggle';
 import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX, Edit2 } from 'lucide-react';
@@ -27,7 +26,7 @@ const App: React.FC = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showNicknameEditModal, setShowNicknameEditModal] = useState(false);
+  const [showProfileEditModal, setShowProfileEditModal] = useState(false);
   const [partnerName, setPartnerName] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -149,17 +148,17 @@ const App: React.FC = () => {
     setShowDisconnectModal(false);
   };
 
-  const handleNicknameSave = async (nickname: string) => {
+  const handleProfileSave = async (nickname: string, customPhotoURL: string | null) => {
     if (!currentUser) return;
 
     try {
-      await updateNickname(currentUser.id, nickname);
+      await updateProfile(currentUser.id, nickname, customPhotoURL);
       const updatedUser = await getCurrentUser();
       setCurrentUser(updatedUser);
-      setShowNicknameEditModal(false);
+      setShowProfileEditModal(false);
     } catch (error) {
-      console.error('Failed to update nickname:', error);
-      alert('Failed to update nickname');
+      console.error('Failed to update profile:', error);
+      alert('Failed to update profile');
     }
   };
 
@@ -237,26 +236,40 @@ const App: React.FC = () => {
                 <div className="text-sm font-bold text-stone-800 dark:text-dark-text-primary">{currentUser.nickname || currentUser.name}</div>
                 {currentUser.nickname && (
                   <button
-                    onClick={() => setShowNicknameEditModal(true)}
+                    onClick={() => setShowProfileEditModal(true)}
                     className="text-stone-400 dark:text-dark-text-tertiary hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
-                    title={t('nickname.edit')}
+                    title={t('profile.edit')}
                   >
                     <Edit2 size={14} />
                   </button>
                 )}
               </div>
             </div>
-            {currentUser.photoURL ? (
-              <img
-                src={currentUser.photoURL}
-                alt={currentUser.name}
-                className="w-9 h-9 rounded-full"
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">
-                <UserIcon size={18} />
-              </div>
-            )}
+            {(() => {
+              const displayPhotoURL = currentUser.customPhotoURL || currentUser.photoURL;
+              if (displayPhotoURL?.startsWith('avatar:')) {
+                const emoji = displayPhotoURL.replace('avatar:', '');
+                return (
+                  <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-lg">
+                    {emoji}
+                  </div>
+                );
+              } else if (displayPhotoURL) {
+                return (
+                  <img
+                    src={displayPhotoURL}
+                    alt={currentUser.name}
+                    className="w-9 h-9 rounded-full object-cover"
+                  />
+                );
+              } else {
+                return (
+                  <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    <UserIcon size={18} className="text-amber-600 dark:text-amber-500" />
+                  </div>
+                );
+              }
+            })()}
             <button onClick={() => setShowLogoutModal(true)} className="text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400 transition-colors ml-2" title={t('auth.logout')}>
               <LogOut size={18} />
             </button>
@@ -370,17 +383,24 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* Nickname Setup Modal */}
+      {/* Profile Setup Modal (Initial) */}
       {currentUser && !currentUser.nickname && (
-        <NicknameSetupModal defaultName={currentUser.name} onSave={handleNicknameSave} />
+        <ProfileSetupModal
+          defaultName={currentUser.name}
+          defaultPhotoURL={currentUser.photoURL}
+          onSave={handleProfileSave}
+          isInitialSetup={true}
+        />
       )}
 
-      {/* Nickname Edit Modal */}
-      {showNicknameEditModal && currentUser && currentUser.nickname && (
-        <NicknameEditModal
-          currentNickname={currentUser.nickname}
-          onSave={handleNicknameSave}
-          onClose={() => setShowNicknameEditModal(false)}
+      {/* Profile Edit Modal */}
+      {showProfileEditModal && currentUser && currentUser.nickname && (
+        <ProfileSetupModal
+          defaultName={currentUser.nickname}
+          defaultPhotoURL={currentUser.customPhotoURL || currentUser.photoURL}
+          onSave={handleProfileSave}
+          onClose={() => setShowProfileEditModal(false)}
+          isInitialSetup={false}
         />
       )}
     </div>

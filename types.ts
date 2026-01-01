@@ -5,7 +5,8 @@ export interface User {
   name: string;                  // displayName (Google name)
   nickname: string | null;       // User's custom nickname
   email: string;                 // Firebase email
-  photoURL: string | null;       // Firebase photoURL
+  photoURL: string | null;       // Firebase photoURL (Google)
+  customPhotoURL: string | null; // User uploaded or selected photo
   partnerId: string | null;      // Partner's UID
   partnershipId: string | null;  // Partnership document ID
 }
@@ -17,6 +18,7 @@ export interface FirebaseUser {
   nickname: string | null;
   email: string;
   photoURL: string | null;
+  customPhotoURL: string | null;
   partnerId: string | null;
   partnershipId: string | null;
   createdAt: Timestamp;

@@ -54,7 +54,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
       id: crypto.randomUUID(),
       userId: currentUser.id,
       userName: currentUser.nickname || currentUser.name,
-      userPhotoURL: currentUser.photoURL,
+      userPhotoURL: currentUser.customPhotoURL || currentUser.photoURL,
       text: newComment,
       timestamp: Timestamp.fromMillis(Date.now()),
       rating
@@ -403,17 +403,30 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     return (
                       <div key={comment.id} className="bg-white dark:bg-dark-bg-secondary p-3 rounded-xl border border-stone-100 dark:border-dark-border-primary shadow-sm">
                         <div className="flex gap-3">
-                          {comment.userPhotoURL ? (
-                            <img
-                              src={comment.userPhotoURL}
-                              alt={comment.userName}
-                              className="w-8 h-8 rounded-full flex-shrink-0"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-                              <UserIcon size={16} className="text-amber-600 dark:text-amber-500" />
-                            </div>
-                          )}
+                          {(() => {
+                            if (comment.userPhotoURL?.startsWith('avatar:')) {
+                              const emoji = comment.userPhotoURL.replace('avatar:', '');
+                              return (
+                                <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0 text-sm">
+                                  {emoji}
+                                </div>
+                              );
+                            } else if (comment.userPhotoURL) {
+                              return (
+                                <img
+                                  src={comment.userPhotoURL}
+                                  alt={comment.userName}
+                                  className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
+                                />
+                              );
+                            } else {
+                              return (
+                                <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                                  <UserIcon size={16} className="text-amber-600 dark:text-amber-500" />
+                                </div>
+                              );
+                            }
+                          })()}
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between items-start mb-1">
                               <span className="font-bold text-sm text-stone-800 dark:text-dark-text-primary">{comment.userName}</span>
