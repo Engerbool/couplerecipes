@@ -39,38 +39,6 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Auto-cleanup: partnerId가 null인데 partnershipId가 있으면 자동 정리
-  useEffect(() => {
-    const cleanupInconsistentState = async () => {
-      if (currentUser && !currentUser.partnerId && currentUser.partnershipId) {
-        console.warn('[AUTO-CLEANUP] Detected inconsistent state - partnerId is null but partnershipId exists');
-        console.log('[AUTO-CLEANUP] Cleaning up partnershipId:', currentUser.partnershipId);
-
-        try {
-          await updateProfile(currentUser.id, currentUser.nickname || currentUser.name, currentUser.customPhotoURL);
-
-          // Firestore에서 partnershipId 제거
-          const { doc, updateDoc } = await import('firebase/firestore');
-          const { db } = await import('./config/firebase');
-          const userRef = doc(db, 'users', currentUser.id);
-          await updateDoc(userRef, { partnershipId: null });
-
-          // 로컬 상태 업데이트
-          setCurrentUser({
-            ...currentUser,
-            partnershipId: null
-          });
-
-          console.log('[AUTO-CLEANUP] Successfully cleaned up partnershipId');
-        } catch (error) {
-          console.error('[AUTO-CLEANUP] Failed to cleanup:', error);
-        }
-      }
-    };
-
-    cleanupInconsistentState();
-  }, [currentUser?.id, currentUser?.partnerId, currentUser?.partnershipId]);
-
   // Load recipes when user has partnership
   useEffect(() => {
     const loadRecipes = async () => {
