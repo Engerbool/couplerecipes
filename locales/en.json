@@ -31,7 +31,7 @@
     "feedback": "Feedback",
     "noFeedback": "No feedback yet.<br/>Be the first to rate this version!",
     "edit": "Edit",
-    "upgrade": "Edit / Upgrade",
+    "upgrade": "Upgrade",
     "createVersion": "Create Version {{version}}",
     "wantToImprove": "Want to improve this recipe?",
     "versionHistory": "Version History",
@@ -48,6 +48,7 @@
   "editor": {
     "newRecipe": "New Recipe",
     "editRecipe": "Edit Recipe",
+    "edit": "Edit: {{title}}",
     "upgrade": "Upgrade: {{title}}",
     "recipeTitle": "Recipe Title",
     "titlePlaceholder": "e.g., Our Sunday Carbonara",
@@ -69,6 +70,7 @@
     "notesPlaceholder": "e.g., Easier than expected and delicious! Maybe add more garlic next time",
     "cancel": "Cancel",
     "save": "Save",
+    "saveChanges": "Save Changes",
     "publishVersion": "Publish New Version",
     "createRecipe": "Create Recipe"
   },

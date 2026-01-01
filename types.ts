@@ -75,4 +75,5 @@ export type ViewState =
   | 'CREATE_RECIPE'
   | 'VIEW_RECIPE'
   | 'EDIT_VERSION'
+  | 'UPGRADE_VERSION'
   | 'PARTNER_INVITE';

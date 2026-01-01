@@ -10,7 +10,8 @@ interface RecipeDetailProps {
   currentUser: User;
   onBack: () => void;
   onUpdateRecipe: (updatedRecipe: Recipe) => void;
-  onEdit: () => void;
+  onEditClick: (recipe: Recipe) => void;
+  onUpgradeClick: (recipe: Recipe) => void;
 }
 
 export const RecipeDetail: React.FC<RecipeDetailProps> = ({
@@ -18,7 +19,8 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
   currentUser,
   onBack,
   onUpdateRecipe,
-  onEdit
+  onEditClick,
+  onUpgradeClick
 }) => {
   const { t } = useTranslation();
   const [activeVersionIndex, setActiveVersionIndex] = useState(recipe.versions.length - 1);
@@ -303,11 +305,6 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                 <h3 className="font-bold text-stone-800 dark:text-dark-text-primary flex items-center gap-2">
                   <MessageSquare size={18}/> {t('recipe.feedback')}
                 </h3>
-                {isLatest && (
-                   <Button variant="ghost" onClick={onEdit} className="text-xs px-2 py-1 h-auto">
-                     {t('recipe.upgrade')}
-                   </Button>
-                )}
               </div>
 
               {/* Comment Form */}
@@ -384,11 +381,24 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
             
             {/* Quick Actions */}
             {isLatest && (
-              <div className="text-center">
-                <p className="text-xs text-stone-400 dark:text-dark-text-tertiary mb-3">{t('recipe.wantToImprove')}</p>
-                <Button onClick={onEdit} variant="secondary" className="w-full justify-center border border-stone-200 dark:border-dark-border-primary bg-white dark:bg-dark-bg-secondary hover:bg-stone-50 dark:hover:bg-dark-bg-tertiary">
-                  <GitBranch size={16} /> {t('recipe.createVersion', { version: activeVersion.versionNumber + 1 })}
-                </Button>
+              <div className="space-y-3">
+                <p className="text-xs text-stone-400 dark:text-dark-text-tertiary text-center">{t('recipe.wantToImprove')}</p>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={() => onEditClick(recipe)}
+                    variant="secondary"
+                    className="w-full justify-center border-2 border-blue-500 dark:border-blue-600 bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700"
+                  >
+                    {t('recipe.edit')}
+                  </Button>
+                  <Button
+                    onClick={() => onUpgradeClick(recipe)}
+                    variant="secondary"
+                    className="w-full justify-center border-2 border-amber-500 dark:border-amber-600 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700"
+                  >
+                    <GitBranch size={16} /> {t('recipe.upgrade')}
+                  </Button>
+                </div>
               </div>
             )}
           </div>

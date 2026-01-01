@@ -31,7 +31,7 @@
     "feedback": "피드백",
     "noFeedback": "아직 피드백이 없습니다.<br/>이 버전을 처음으로 평가해보세요!",
     "edit": "수정",
-    "upgrade": "수정 / 업그레이드",
+    "upgrade": "업그레이드",
     "createVersion": "버전 {{version}} 만들기",
     "wantToImprove": "이 레시피를 개선하고 싶으신가요?",
     "versionHistory": "버전 기록",
@@ -48,6 +48,7 @@
   "editor": {
     "newRecipe": "새 레시피",
     "editRecipe": "레시피 수정",
+    "edit": "수정: {{title}}",
     "upgrade": "업그레이드: {{title}}",
     "recipeTitle": "레시피 이름",
     "titlePlaceholder": "예: 우리만의 까르보나라",
@@ -69,6 +70,7 @@
     "notesPlaceholder": "예: 생각보다 쉽고 맛있어요! 마늘을 더 넣으면 좋을 것 같아요",
     "cancel": "취소",
     "save": "저장",
+    "saveChanges": "변경사항 저장",
     "publishVersion": "새 버전 발행",
     "createRecipe": "레시피 만들기"
   },

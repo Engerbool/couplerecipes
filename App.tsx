@@ -123,6 +123,16 @@ const App: React.FC = () => {
     setView('VIEW_RECIPE');
   };
 
+  const handleEditRecipeClick = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setView('EDIT_VERSION');
+  };
+
+  const handleUpgradeRecipeClick = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setView('UPGRADE_VERSION');
+  };
+
   const handleInviteSuccess = async () => {
     const updatedUser = await getCurrentUser();
     setCurrentUser(updatedUser);
@@ -260,14 +270,15 @@ const App: React.FC = () => {
           </>
         )}
 
-        {(view === 'CREATE_RECIPE' || view === 'EDIT_VERSION') && (
-          <RecipeEditor 
+        {(view === 'CREATE_RECIPE' || view === 'EDIT_VERSION' || view === 'UPGRADE_VERSION') && (
+          <RecipeEditor
             user={currentUser}
             existingRecipe={selectedRecipe || undefined}
-            isNewVersion={view === 'EDIT_VERSION'}
+            isNewVersion={view === 'EDIT_VERSION' || view === 'UPGRADE_VERSION'}
+            editMode={view === 'EDIT_VERSION' ? 'edit' : view === 'UPGRADE_VERSION' ? 'upgrade' : undefined}
             onSave={handleSaveRecipe}
             onCancel={() => {
-              if (view === 'EDIT_VERSION' && selectedRecipe) {
+              if ((view === 'EDIT_VERSION' || view === 'UPGRADE_VERSION') && selectedRecipe) {
                 setView('VIEW_RECIPE');
               } else {
                 setView('DASHBOARD');
@@ -297,7 +308,8 @@ const App: React.FC = () => {
                 console.error('Failed to update recipe:', error);
               }
             }}
-            onEdit={() => setView('EDIT_VERSION')}
+            onEditClick={handleEditRecipeClick}
+            onUpgradeClick={handleUpgradeRecipeClick}
           />
         )}
       </main>

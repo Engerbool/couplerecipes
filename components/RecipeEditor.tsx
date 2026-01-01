@@ -11,6 +11,7 @@ interface RecipeEditorProps {
   onCancel: () => void;
   existingRecipe?: Recipe;
   isNewVersion?: boolean;
+  editMode?: 'edit' | 'upgrade';
 }
 
 export const RecipeEditor: React.FC<RecipeEditorProps> = ({
@@ -18,7 +19,8 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   onSave,
   onCancel,
   existingRecipe,
-  isNewVersion
+  isNewVersion,
+  editMode
 }) => {
   const { t, i18n } = useTranslation();
 
@@ -141,12 +143,32 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
     };
 
     if (existingRecipe) {
+      let updatedVersions: RecipeVersion[];
+      let updatedCurrentIndex: number;
+
+      if (editMode === 'edit') {
+        // 수정 모드: 마지막 버전 덮어쓰기
+        updatedVersions = [...existingRecipe.versions];
+        const lastIndex = updatedVersions.length - 1;
+        updatedVersions[lastIndex] = {
+          ...newVersion,
+          versionNumber: existingRecipe.versions[lastIndex].versionNumber,  // 버전 번호 유지
+          createdAt: existingRecipe.versions[lastIndex].createdAt,          // 생성 시간 유지
+          comments: existingRecipe.versions[lastIndex].comments             // 댓글 유지
+        };
+        updatedCurrentIndex = existingRecipe.currentVersionIndex;
+      } else {
+        // 업그레이드 모드: 새 버전 추가
+        updatedVersions = [...existingRecipe.versions, newVersion];
+        updatedCurrentIndex = existingRecipe.versions.length;
+      }
+
       const updatedRecipe: Recipe = {
         ...existingRecipe,
         imageUrl: image || existingRecipe.imageUrl,
         updatedAt: Timestamp.fromMillis(Date.now()),
-        versions: [...existingRecipe.versions, newVersion],
-        currentVersionIndex: existingRecipe.versions.length
+        versions: updatedVersions,
+        currentVersionIndex: updatedCurrentIndex
       };
       onSave(updatedRecipe);
     } else {
@@ -170,7 +192,13 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
     <div className="max-w-3xl mx-auto bg-white dark:bg-dark-bg-secondary p-6 rounded-xl shadow-lg my-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-stone-800 dark:text-dark-text-primary">
-          {existingRecipe ? (isNewVersion ? t('editor.upgrade', { title: existingRecipe.title }) : t('editor.editRecipe')) : t('editor.newRecipe')}
+          {existingRecipe ? (
+            editMode === 'edit'
+              ? t('editor.edit', { title: existingRecipe.title })
+              : t('editor.upgrade', { title: existingRecipe.title })
+          ) : (
+            t('editor.newRecipe')
+          )}
         </h2>
         <Button variant="ghost" onClick={onCancel}><X size={20}/></Button>
       </div>
@@ -339,7 +367,13 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
           <Button type="button" variant="ghost" onClick={onCancel}>{t('editor.cancel')}</Button>
           <Button type="submit">
             <Save size={18} />
-            {existingRecipe ? t('editor.publishVersion') : t('editor.createRecipe')}
+            {existingRecipe ? (
+              editMode === 'edit'
+                ? t('editor.saveChanges')
+                : t('editor.publishVersion')
+            ) : (
+              t('editor.createRecipe')
+            )}
           </Button>
         </div>
 
