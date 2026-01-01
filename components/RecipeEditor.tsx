@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Timestamp } from 'firebase/firestore';
 import { Recipe, User, RecipeVersion, Ingredient } from '../types';
 import { Button } from './Button';
-import { Save, X, Image as ImageIcon, Plus, Trash2, ArrowUp, ArrowDown, User as UserIcon } from 'lucide-react';
+import { Save, X, Image as ImageIcon, Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface RecipeEditorProps {
   user: User;
@@ -32,7 +32,6 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   const [image, setImage] = useState<string>('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: '', unit: '' }]);
   const [steps, setSteps] = useState<string[]>(['']);
-  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     if (existingRecipe) {
@@ -137,7 +136,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
       versionNumber: existingRecipe ? existingRecipe.versions.length + 1 : 1,
       ingredients: ingredientsList,
       steps: stepsList,
-      notes: notes,
+      notes: '',
       createdAt: Timestamp.fromMillis(Date.now()),
       comments: []
     };
@@ -334,33 +333,6 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
           <Button type="button" variant="secondary" onClick={addStep} className="mt-3 w-full border border-stone-300 dark:border-dark-border-primary bg-stone-50 dark:bg-dark-bg-tertiary">
             <Plus size={16} /> {t('editor.addStep')}
           </Button>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-stone-700 dark:text-dark-text-secondary mb-3">{t('editor.versionNotes')}</label>
-          <div className="flex gap-3 items-start bg-stone-50 dark:bg-dark-bg-tertiary p-4 rounded-xl border border-stone-200 dark:border-dark-border-primary">
-            {user.photoURL ? (
-              <img
-                src={user.photoURL}
-                alt={user.name}
-                className="w-10 h-10 rounded-full flex-shrink-0"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-                <UserIcon size={20} className="text-amber-600 dark:text-amber-500" />
-              </div>
-            )}
-            <div className="flex-1">
-              <div className="text-sm font-medium text-stone-700 dark:text-dark-text-primary mb-2">{user.name}</div>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none resize-y bg-white dark:bg-dark-bg-secondary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
-                placeholder={t('editor.notesPlaceholder')}
-              />
-            </div>
-          </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-6 border-t border-stone-100 dark:border-dark-border-primary">
