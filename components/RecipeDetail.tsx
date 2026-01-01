@@ -255,12 +255,6 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
         <div className="p-6 md:p-10 grid md:grid-cols-3 gap-10">
           {/* Main Content */}
           <div className="md:col-span-2 space-y-10">
-            {activeVersion.notes && (
-              <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 dark:border-amber-600 p-5 rounded-r-xl text-amber-900 dark:text-amber-400 italic text-lg leading-relaxed shadow-sm">
-                "{activeVersion.notes}"
-              </div>
-            )}
-
             <div>
               <h3 className="text-2xl font-bold text-stone-800 dark:text-dark-text-primary mb-5 flex items-center gap-2">
                 {t('recipe.ingredients')} <span className="text-sm font-normal text-stone-400 dark:text-dark-text-tertiary bg-stone-100 dark:bg-dark-bg-tertiary px-2 py-1 rounded-full">{activeVersion.ingredients.length}</span>
