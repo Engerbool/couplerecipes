@@ -97,14 +97,16 @@ export const getRecipesByPartnership = async (
 };
 
 /**
- * 사용자의 모든 레시피 가져오기 (현재 + 과거 파트너십)
+ * 사용자의 모든 레시피 가져오기 (개인 + 현재 + 과거 파트너십)
  * 파트너 연결 해제 후에도 기존 레시피에 접근 가능
  */
 export const getRecipesByUser = async (
+  userId: string,
   currentPartnershipId: string | null,
   pastPartnershipIds?: string[]
 ): Promise<Recipe[]> => {
   const allPartnershipIds = [
+    userId, // 개인 레시피 (partnershipId = userId)
     ...(currentPartnershipId ? [currentPartnershipId] : []),
     ...(pastPartnershipIds || []),
   ];

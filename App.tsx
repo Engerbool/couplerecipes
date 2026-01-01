@@ -41,12 +41,13 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Load recipes when user has partnership (현재 + 과거)
+  // Load recipes (개인 + 현재 + 과거 파트너십)
   useEffect(() => {
     const loadRecipes = async () => {
       if (currentUser) {
         try {
           const recipes = await getRecipesByUser(
+            currentUser.id,
             currentUser.partnershipId,
             currentUser.pastPartnershipIds
           );
@@ -108,14 +109,15 @@ const App: React.FC = () => {
   };
 
   const handleSaveRecipe = async (recipe: Recipe) => {
-    if (!currentUser?.partnershipId) {
-      alert('Please connect with a partner first');
-      return;
-    }
+    if (!currentUser) return;
+
+    // 개인 레시피 지원: 파트너 없으면 자기 userId를 partnershipId로 사용
+    const effectivePartnershipId = currentUser.partnershipId || currentUser.id;
 
     try {
-      await saveRecipe(recipe, currentUser.partnershipId);
+      await saveRecipe(recipe, effectivePartnershipId);
       const updatedRecipes = await getRecipesByUser(
+        currentUser.id,
         currentUser.partnershipId,
         currentUser.pastPartnershipIds
       );
@@ -160,10 +162,11 @@ const App: React.FC = () => {
       const updatedUser = await getCurrentUser();
       setCurrentUser(updatedUser);
 
-      // 과거 파트너십 레시피 로드 (파트너 끊어도 레시피는 유지)
+      // 레시피 로드 (개인 + 과거 파트너십 레시피 모두 유지)
       if (updatedUser) {
         try {
           const recipes = await getRecipesByUser(
+            updatedUser.id,
             updatedUser.partnershipId,
             updatedUser.pastPartnershipIds
           );
@@ -190,10 +193,11 @@ const App: React.FC = () => {
       const updatedUser = await getCurrentUser();
       setCurrentUser(updatedUser);
 
-      // 레시피 다시 로드 (과거 파트너십이 있다면)
+      // 레시피 다시 로드 (개인 레시피로 돌아감)
       if (updatedUser) {
         try {
           const recipes = await getRecipesByUser(
+            updatedUser.id,
             updatedUser.partnershipId,
             updatedUser.pastPartnershipIds
           );
@@ -415,12 +419,16 @@ const App: React.FC = () => {
               setSelectedRecipe(null);
             }}
             onUpdateRecipe={async (updated) => {
-              if (!currentUser?.partnershipId) return;
+              if (!currentUser) return;
+
+              // 개인 레시피 지원: 파트너 없으면 자기 userId를 partnershipId로 사용
+              const effectivePartnershipId = currentUser.partnershipId || currentUser.id;
 
               try {
-                await saveRecipe(updated, currentUser.partnershipId);
+                await saveRecipe(updated, effectivePartnershipId);
                 setSelectedRecipe(updated);
                 const updatedRecipes = await getRecipesByUser(
+                  currentUser.id,
                   currentUser.partnershipId,
                   currentUser.pastPartnershipIds
                 );

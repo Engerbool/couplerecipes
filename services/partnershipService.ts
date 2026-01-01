@@ -99,6 +99,7 @@ export const findPartnershipByCode = async (
 /**
  * 파트너십 참여 (초대 코드 사용)
  * shared.md 참고: Batch write로 원자성 보장
+ * 개인 레시피 병합: 양쪽의 개인 레시피를 pastPartnershipIds에 추가
  */
 export const joinPartnership = async (
   userId: string,
@@ -122,25 +123,42 @@ export const joinPartnership = async (
     throw new Error('자기 자신을 초대할 수 없습니다');
   }
 
+  const creatorId = partnership.users[0];
+  const creatorRef = doc(db, 'users', creatorId);
+  const creatorSnap = await getDocFromServer(creatorRef);
+  const creatorData = creatorSnap.data();
+
+  const userData = userSnap.data();
   const batch = writeBatch(db);
 
   // 1. Partnership 업데이트 (users 배열, status)
   const partnershipRef = doc(db, 'partnerships', partnership.id);
   batch.update(partnershipRef, {
-    users: [partnership.users[0], userId],
+    users: [creatorId, userId],
     status: 'active',
   });
 
-  // 2. 참여자의 partnershipId, partnerId 업데이트
+  // 2. 참여자(B)의 업데이트: 개인 레시피 + 생성자 개인 레시피 병합
+  const joinerPastIds = userData?.pastPartnershipIds || [];
   batch.update(userRef, {
     partnershipId: partnership.id,
-    partnerId: partnership.users[0],
+    partnerId: creatorId,
+    pastPartnershipIds: [
+      ...joinerPastIds,
+      userId,      // 자기 개인 레시피 (partnershipId = userId)
+      creatorId    // 생성자 개인 레시피 (partnershipId = creatorId)
+    ],
   });
 
-  // 3. 생성자의 partnerId 업데이트
-  const creatorRef = doc(db, 'users', partnership.users[0]);
+  // 3. 생성자(A)의 업데이트: 개인 레시피 + 참여자 개인 레시피 병합
+  const creatorPastIds = creatorData?.pastPartnershipIds || [];
   batch.update(creatorRef, {
     partnerId: userId,
+    pastPartnershipIds: [
+      ...creatorPastIds,
+      creatorId,   // 자기 개인 레시피 (partnershipId = creatorId)
+      userId       // 참여자 개인 레시피 (partnershipId = userId)
+    ],
   });
 
   await batch.commit();
