@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Recipe } from '../types';
-import { Clock, ChefHat, Users } from 'lucide-react';
+import { Clock, ChefHat, Users, UtensilsCrossed } from 'lucide-react';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -18,11 +18,17 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
       className="group bg-white dark:bg-dark-bg-secondary rounded-xl shadow-sm border border-stone-100 dark:border-dark-border-primary hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full"
     >
       <div className="relative h-48 overflow-hidden bg-stone-200 dark:bg-dark-bg-tertiary">
-        <img
-          src={recipe.imageUrl || `https://picsum.photos/seed/${recipe.id}/400/300`}
-          alt={recipe.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {recipe.imageUrl ? (
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200 dark:from-dark-bg-tertiary dark:to-dark-bg-primary">
+            <UtensilsCrossed size={64} className="text-stone-300 dark:text-dark-text-tertiary opacity-50" />
+          </div>
+        )}
         <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
           v{currentVersion.versionNumber}.0
         </div>
