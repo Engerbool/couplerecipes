@@ -27,7 +27,9 @@ export const DisconnectModal: React.FC<Props> = ({
     try {
       setLoading(true);
       setError('');
+      console.log('[DEBUG] Starting disconnect for userId:', userId, 'partnershipId:', partnershipId);
       await leavePartnership(userId, partnershipId);
+      console.log('[DEBUG] Disconnect completed successfully');
       onSuccess();
       onClose();
     } catch (err: any) {

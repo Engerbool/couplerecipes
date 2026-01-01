@@ -27,6 +27,13 @@ export const createPartnership = async (userId: string): Promise<string> => {
   // 캐시를 무시하고 서버에서 직접 가져오기
   const userSnap = await getDocFromServer(userRef);
 
+  console.log('[DEBUG] createPartnership - User data from server:', {
+    exists: userSnap.exists(),
+    partnershipId: userSnap.data()?.partnershipId,
+    partnerId: userSnap.data()?.partnerId,
+    data: userSnap.data()
+  });
+
   if (userSnap.exists() && userSnap.data().partnershipId) {
     throw new Error('이미 파트너가 있습니다');
   }
@@ -153,10 +160,13 @@ export const getPartner = async (partnerId: string) => {
  * shared.md 참고: 양방향 업데이트 필수
  */
 export const leavePartnership = async (userId: string, partnershipId: string): Promise<void> => {
+  console.log('[DEBUG] leavePartnership called with:', { userId, partnershipId });
+
   const partnershipRef = doc(db, 'partnerships', partnershipId);
   const partnershipSnap = await getDoc(partnershipRef);
 
   if (!partnershipSnap.exists()) {
+    console.error('[DEBUG] Partnership not found:', partnershipId);
     throw new Error('파트너십을 찾을 수 없습니다');
   }
 
@@ -164,8 +174,11 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
   const partnerId = partnership.users.find(uid => uid !== userId);
 
   if (!partnerId) {
+    console.error('[DEBUG] Partner not found in users:', partnership.users);
     throw new Error('파트너를 찾을 수 없습니다');
   }
+
+  console.log('[DEBUG] Found partner:', partnerId);
 
   const batch = writeBatch(db);
 
@@ -186,5 +199,7 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
   // 3. Partnership 문서 삭제
   batch.delete(partnershipRef);
 
+  console.log('[DEBUG] About to commit batch updates');
   await batch.commit();
+  console.log('[DEBUG] Batch commit successful');
 };
