@@ -19,16 +19,6 @@ service cloud.firestore {
              request.auth.uid in getPartnership(partnershipId).data.users;
     }
 
-    // 개인 레시피 또는 파트너십 레시피 접근 권한 확인
-    function canAccessRecipe(partnershipId) {
-      // 개인 레시피: partnershipId == userId (partnership 문서 없음)
-      // 파트너십 레시피: partnership 문서 존재하고 멤버여야 함
-      return isAuthenticated() && (
-        partnershipId == request.auth.uid ||
-        (exists(/databases/$(database)/documents/partnerships/$(partnershipId)) &&
-         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(partnershipId)).data.users)
-      );
-    }
 
     // Users Collection
     match /users/{userId} {
@@ -47,18 +37,38 @@ service cloud.firestore {
 
     // Recipes Collection
     match /recipes/{recipeId} {
-      allow read: if canAccessRecipe(resource.data.partnershipId);
-      allow create: if isAuthenticated() &&
-                       canAccessRecipe(request.resource.data.partnershipId);
-      allow update, delete: if canAccessRecipe(resource.data.partnershipId);
+      allow read: if isAuthenticated() && (
+        resource.data.partnershipId == request.auth.uid ||
+        isPartnershipMember(resource.data.partnershipId)
+      );
+      allow create: if isAuthenticated() && (
+        request.resource.data.partnershipId == request.auth.uid ||
+        isPartnershipMember(request.resource.data.partnershipId)
+      );
+      allow update, delete: if isAuthenticated() && (
+        resource.data.partnershipId == request.auth.uid ||
+        isPartnershipMember(resource.data.partnershipId)
+      );
 
       match /versions/{versionId} {
-        allow read: if canAccessRecipe(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
-        allow write: if canAccessRecipe(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
+          isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)
+        );
+        allow write: if isAuthenticated() && (
+          get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
+          isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)
+        );
 
         match /comments/{commentId} {
-          allow read: if canAccessRecipe(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
-          allow create: if canAccessRecipe(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId);
+          allow read: if isAuthenticated() && (
+            get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
+            isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)
+          );
+          allow create: if isAuthenticated() && (
+            get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
+            isPartnershipMember(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)
+          );
           allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
         }
       }
