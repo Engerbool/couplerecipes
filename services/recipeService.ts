@@ -179,8 +179,17 @@ export const saveRecipe = async (
   recipe: Recipe,
   partnershipId: string
 ): Promise<void> => {
+  console.log('=== saveRecipe DEBUG ===');
+  console.log('Recipe ID:', recipe.id);
+  console.log('Partnership ID:', partnershipId);
+  console.log('Author ID:', recipe.authorId);
+  console.log('Title:', recipe.title);
+  console.log('Versions count:', recipe.versions.length);
+
   const recipeRef = doc(db, 'recipes', recipe.id);
   const recipeSnap = await getDoc(recipeRef);
+
+  console.log('Recipe exists:', recipeSnap.exists());
 
   const batch = writeBatch(db);
 
@@ -253,7 +262,10 @@ export const saveRecipe = async (
     }
   }
 
+  console.log('Committing batch write...');
   await batch.commit();
+  console.log('Batch write successful!');
+  console.log('=== END saveRecipe DEBUG ===');
 };
 
 /**

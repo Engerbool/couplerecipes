@@ -4,7 +4,8 @@ import { Recipe, User, ViewState } from './types';
 import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser, updateProfile } from './services/authService';
 import { getRecipesByUser, saveRecipe, deleteRecipe } from './services/recipeService';
 import { getPartner } from './services/partnershipService';
-import { auth } from './config/firebase';
+import { auth, db } from './config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { RecipeCard } from './components/RecipeCard';
 import { RecipeEditor } from './components/RecipeEditor';
 import { RecipeDetail } from './components/RecipeDetail';
@@ -123,6 +124,27 @@ const App: React.FC = () => {
 
     // 개인 레시피 지원: 파트너 없으면 자기 userId를 partnershipId로 사용
     const effectivePartnershipId = currentUser.partnershipId || currentUser.id;
+
+    console.log('=== handleSaveRecipe DEBUG ===');
+    console.log('Current User ID:', currentUser.id);
+    console.log('Current User partnershipId:', currentUser.partnershipId);
+    console.log('Effective Partnership ID:', effectivePartnershipId);
+    console.log('Recipe ID:', recipe.id);
+
+    // Partnership 문서 확인
+    if (currentUser.partnershipId) {
+      try {
+        const partnershipDoc = await getDoc(doc(db, 'partnerships', currentUser.partnershipId));
+        console.log('Partnership exists:', partnershipDoc.exists());
+        if (partnershipDoc.exists()) {
+          console.log('Partnership users:', partnershipDoc.data()?.users);
+          console.log('Current user in partnership:', partnershipDoc.data()?.users?.includes(currentUser.id));
+        }
+      } catch (err) {
+        console.error('Error checking partnership:', err);
+      }
+    }
+    console.log('================================');
 
     try {
       await saveRecipe(recipe, effectivePartnershipId);
