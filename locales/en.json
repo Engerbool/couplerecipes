@@ -95,6 +95,7 @@
     "createCodeFailed": "Failed to create invite code",
     "joinFailed": "Failed to connect with partner",
     "disconnect": "Disconnect",
+    "clickForOptions": "Click for partner options",
     "disconnectPartner": "Disconnect from Partner",
     "disconnectConfirm": "Are you sure you want to disconnect from your partner?",
     "disconnectWarning": "You won't be able to create new recipes together, but existing recipes will remain visible.",

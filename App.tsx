@@ -285,17 +285,10 @@ const App: React.FC = () => {
           <LanguageToggle />
           {currentUser?.partnerId ? (
             // Active 상태: 파트너와 연결됨
-            <>
-              <PartnerBadge partnerId={currentUser.partnerId} />
-              <Button
-                variant="ghost"
-                onClick={() => setShowDisconnectModal(true)}
-                className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-900/20"
-                title={t('partner.disconnect')}
-              >
-                <UserX size={16} />
-              </Button>
-            </>
+            <PartnerBadge
+              partnerId={currentUser.partnerId}
+              onDisconnect={() => setShowDisconnectModal(true)}
+            />
           ) : currentUser?.partnershipId ? (
             // Pending 상태: 초대 코드 생성했지만 아직 참여 없음
             <Button
