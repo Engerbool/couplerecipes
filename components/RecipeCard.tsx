@@ -43,7 +43,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
         <div className="mt-auto flex items-center justify-between text-stone-500 dark:text-dark-text-secondary text-sm">
           <div className="flex items-center gap-1">
             <Clock size={14} />
-            <span>{recipe.updatedAt.toDate().toLocaleDateString()}</span>
+            <span>{recipe.createdAt.toDate().toLocaleDateString()}</span>
           </div>
           <div className="flex items-center gap-1">
             <ChefHat size={14} />

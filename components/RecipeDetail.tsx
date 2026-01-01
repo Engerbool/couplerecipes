@@ -278,7 +278,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                 <span className="flex items-center gap-1.5 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
                   <GitBranch size={18}/> v{activeVersion.versionNumber}.0
                 </span>
-                <span className="opacity-75">{new Date(activeVersion.createdAt).toLocaleDateString()}</span>
+                <span className="opacity-75">{activeVersion.createdAt.toDate().toLocaleDateString()}</span>
               </div>
             </div>
           </div>
