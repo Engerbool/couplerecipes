@@ -11,11 +11,12 @@ import { Button } from './components/Button';
 import { PartnerInviteModal } from './components/PartnerInviteModal';
 import { PartnerBadge } from './components/PartnerBadge';
 import { DisconnectModal } from './components/DisconnectModal';
+import { CancelInviteModal } from './components/CancelInviteModal';
 import { LogoutModal } from './components/LogoutModal';
 import { ProfileSetupModal } from './components/ProfileSetupModal';
 import { LanguageToggle } from './components/LanguageToggle';
 import { DarkModeToggle } from './components/DarkModeToggle';
-import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX, Edit2 } from 'lucide-react';
+import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX, X, Edit2 } from 'lucide-react';
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const App: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
+  const [showCancelInviteModal, setShowCancelInviteModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showProfileEditModal, setShowProfileEditModal] = useState(false);
   const [partnerName, setPartnerName] = useState('');
@@ -150,24 +152,61 @@ const App: React.FC = () => {
   const handleDisconnectSuccess = async () => {
     if (!currentUser) return;
 
-    // Firestore에서 최신 유저 정보 가져오기 (pastPartnershipIds 포함)
-    const updatedUser = await getCurrentUser();
-    setCurrentUser(updatedUser);
+    try {
+      // Firestore 배치 커밋 전파 대기
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-    // 과거 파트너십 레시피 로드 (파트너 끊어도 레시피는 유지)
-    if (updatedUser) {
-      try {
-        const recipes = await getRecipesByUser(
-          updatedUser.partnershipId,
-          updatedUser.pastPartnershipIds
-        );
-        setRecipes(recipes);
-      } catch (error) {
-        console.error('Failed to load recipes after disconnect:', error);
+      // Firestore에서 최신 유저 정보 가져오기 (pastPartnershipIds 포함)
+      const updatedUser = await getCurrentUser();
+      setCurrentUser(updatedUser);
+
+      // 과거 파트너십 레시피 로드 (파트너 끊어도 레시피는 유지)
+      if (updatedUser) {
+        try {
+          const recipes = await getRecipesByUser(
+            updatedUser.partnershipId,
+            updatedUser.pastPartnershipIds
+          );
+          setRecipes(recipes);
+        } catch (error) {
+          console.error('Failed to load recipes after disconnect:', error);
+        }
       }
+    } catch (error) {
+      console.error('Failed to refresh user after disconnect:', error);
+    } finally {
+      setShowDisconnectModal(false);
     }
+  };
 
-    setShowDisconnectModal(false);
+  const handleCancelInvite = async () => {
+    if (!currentUser) return;
+
+    try {
+      // Firestore 배치 커밋 전파 대기
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Firestore에서 최신 유저 정보 가져오기
+      const updatedUser = await getCurrentUser();
+      setCurrentUser(updatedUser);
+
+      // 레시피 다시 로드 (과거 파트너십이 있다면)
+      if (updatedUser) {
+        try {
+          const recipes = await getRecipesByUser(
+            updatedUser.partnershipId,
+            updatedUser.pastPartnershipIds
+          );
+          setRecipes(recipes);
+        } catch (error) {
+          console.error('Failed to load recipes after cancel invite:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to refresh user after cancel invite:', error);
+    } finally {
+      setShowCancelInviteModal(false);
+    }
   };
 
   const handleProfileSave = async (nickname: string, customPhotoURL: string | null) => {
@@ -232,18 +271,34 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
           <LanguageToggle />
-          {(currentUser?.partnerId || currentUser?.partnershipId) ? (
+          {currentUser?.partnerId ? (
+            // Active 상태: 파트너와 연결됨
             <>
-              {currentUser?.partnerId && <PartnerBadge partnerId={currentUser.partnerId} />}
+              <PartnerBadge partnerId={currentUser.partnerId} />
               <Button
                 variant="ghost"
                 onClick={() => setShowDisconnectModal(true)}
-                className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-900/20"
               >
                 <UserX size={16} /> <span className="hidden sm:inline">{t('partner.disconnect')}</span>
               </Button>
             </>
+          ) : currentUser?.partnershipId ? (
+            // Pending 상태: 초대 코드 생성했지만 아직 참여 없음
+            <>
+              <span className="text-sm text-stone-500 dark:text-dark-text-secondary hidden sm:inline">
+                {t('partner.waitingForPartner')}
+              </span>
+              <Button
+                variant="ghost"
+                onClick={() => setShowCancelInviteModal(true)}
+                className="text-sm text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-500 dark:hover:bg-amber-900/20"
+              >
+                <X size={16} /> <span className="hidden sm:inline">{t('partner.cancelInvite')}</span>
+              </Button>
+            </>
           ) : (
+            // 파트너 없음
             <Button
               variant="ghost"
               onClick={() => setShowInviteModal(true)}
@@ -397,6 +452,16 @@ const App: React.FC = () => {
           partnerName={partnerName}
           onClose={() => setShowDisconnectModal(false)}
           onSuccess={handleDisconnectSuccess}
+        />
+      )}
+
+      {/* Cancel Invite Modal */}
+      {showCancelInviteModal && currentUser && currentUser.partnershipId && (
+        <CancelInviteModal
+          userId={currentUser.id}
+          partnershipId={currentUser.partnershipId}
+          onClose={() => setShowCancelInviteModal(false)}
+          onSuccess={handleCancelInvite}
         />
       )}
 

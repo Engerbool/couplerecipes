@@ -22,6 +22,7 @@ export interface FirebaseUser {
   customPhotoURL: string | null;
   partnerId: string | null;
   partnershipId: string | null;
+  pastPartnershipIds?: string[];
   createdAt: Timestamp;
   lastLoginAt: Timestamp;
 }

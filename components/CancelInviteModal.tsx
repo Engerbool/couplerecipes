@@ -7,15 +7,13 @@ import { leavePartnership } from '../services/partnershipService';
 interface Props {
   userId: string;
   partnershipId: string;
-  partnerName: string;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export const DisconnectModal: React.FC<Props> = ({
+export const CancelInviteModal: React.FC<Props> = ({
   userId,
   partnershipId,
-  partnerName,
   onClose,
   onSuccess,
 }) => {
@@ -23,24 +21,24 @@ export const DisconnectModal: React.FC<Props> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleDisconnect = async () => {
+  const handleCancelInvite = async () => {
     // 동시 실행 방지
     if (loading) {
-      console.warn('[DEBUG] Disconnect already in progress, ignoring duplicate call');
+      console.warn('[DEBUG] Cancel already in progress, ignoring duplicate call');
       return;
     }
 
     try {
       setLoading(true);
       setError('');
-      console.log('[DEBUG] Starting disconnect for userId:', userId, 'partnershipId:', partnershipId);
+      console.log('[DEBUG] Starting cancel invite for userId:', userId, 'partnershipId:', partnershipId);
       await leavePartnership(userId, partnershipId);
-      console.log('[DEBUG] Disconnect completed successfully');
+      console.log('[DEBUG] Cancel invite completed successfully');
       onSuccess();
       onClose();
     } catch (err: any) {
-      console.error('Disconnect failed:', err);
-      setError(err.message || t('partner.disconnectFailed'));
+      console.error('Cancel invite failed:', err);
+      setError(err.message || t('partner.createCodeFailed'));
     } finally {
       setLoading(false);
     }
@@ -57,24 +55,21 @@ export const DisconnectModal: React.FC<Props> = ({
         </button>
 
         <div className="text-center">
-          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle size={32} className="text-red-600 dark:text-red-500" />
+          <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle size={32} className="text-amber-600 dark:text-amber-500" />
           </div>
 
           <h2 className="text-2xl font-bold text-stone-800 dark:text-dark-text-primary mb-2">
-            {t('partner.disconnectPartner')}
+            {t('partner.cancelInviteTitle')}
           </h2>
 
           <p className="text-stone-600 dark:text-dark-text-secondary mb-4">
-            {t('partner.disconnectConfirm')}
+            {t('partner.cancelInviteConfirm')}
           </p>
 
           <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6 text-left">
             <p className="text-sm text-amber-800 dark:text-amber-400">
-              <strong>{t('nav.connectedWith', { name: partnerName })}</strong>
-            </p>
-            <p className="text-xs text-amber-700 dark:text-amber-500 mt-2">
-              {t('partner.disconnectWarning')}
+              {t('partner.cancelInviteWarning')}
             </p>
           </div>
 
@@ -94,11 +89,11 @@ export const DisconnectModal: React.FC<Props> = ({
               {t('partner.back')}
             </Button>
             <Button
-              onClick={handleDisconnect}
+              onClick={handleCancelInvite}
               disabled={loading}
-              className="flex-1 justify-center bg-red-600 hover:bg-red-700"
+              className="flex-1 justify-center bg-amber-600 hover:bg-amber-700"
             >
-              {loading ? t('partner.disconnecting') : t('partner.disconnect')}
+              {loading ? t('partner.canceling') : t('partner.cancelInvite')}
             </Button>
           </div>
         </div>

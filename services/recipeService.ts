@@ -109,7 +109,10 @@ export const getRecipesByUser = async (
     ...(pastPartnershipIds || []),
   ];
 
-  if (allPartnershipIds.length === 0) {
+  // 중복 제거 (currentPartnershipId가 pastPartnershipIds에도 있을 경우 대비)
+  const uniquePartnershipIds = Array.from(new Set(allPartnershipIds));
+
+  if (uniquePartnershipIds.length === 0) {
     return [];
   }
 
@@ -118,8 +121,8 @@ export const getRecipesByUser = async (
   const BATCH_SIZE = 30;
   const recipes: Recipe[] = [];
 
-  for (let i = 0; i < allPartnershipIds.length; i += BATCH_SIZE) {
-    const batch = allPartnershipIds.slice(i, i + BATCH_SIZE);
+  for (let i = 0; i < uniquePartnershipIds.length; i += BATCH_SIZE) {
+    const batch = uniquePartnershipIds.slice(i, i + BATCH_SIZE);
     const q = query(
       collection(db, 'recipes'),
       where('partnershipId', 'in', batch),

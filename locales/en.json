@@ -100,7 +100,14 @@
     "disconnectWarning": "You won't be able to create new recipes together, but existing recipes will remain visible.",
     "disconnecting": "Disconnecting...",
     "disconnectSuccess": "Successfully disconnected from partner",
-    "disconnectFailed": "Failed to disconnect from partner"
+    "disconnectFailed": "Failed to disconnect from partner",
+    "waitingForPartner": "Waiting for partner...",
+    "cancelInvite": "Cancel Invite",
+    "cancelInviteTitle": "Cancel Invitation",
+    "cancelInviteConfirm": "Do you want to cancel this invitation?",
+    "cancelInviteWarning": "The invite code will be invalidated and your partner won't be able to join.",
+    "canceling": "Canceling...",
+    "cancelSuccess": "Invitation canceled successfully"
   },
   "nickname": {
     "welcome": "Welcome!",

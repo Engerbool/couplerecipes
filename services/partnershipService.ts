@@ -166,7 +166,7 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
 
   // 1. 본인 user 문서 가져오기 (pastPartnershipIds 확인용)
   const userRef = doc(db, 'users', userId);
-  const userSnap = await getDoc(userRef);
+  const userSnap = await getDocFromServer(userRef);
   const userData = userSnap.data();
   const pastPartnershipIds = userData?.pastPartnershipIds || [];
 
@@ -184,7 +184,7 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
 
   // 4. Partnership 문서 확인 및 파트너 업데이트
   const partnershipRef = doc(db, 'partnerships', partnershipId);
-  const partnershipSnap = await getDoc(partnershipRef);
+  const partnershipSnap = await getDocFromServer(partnershipRef);
 
   if (partnershipSnap.exists()) {
     const partnership = partnershipSnap.data() as Partnership;
@@ -194,7 +194,7 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
       console.log('[DEBUG] Found partner:', partnerId);
       // 파트너 user 문서도 동일하게 업데이트
       const partnerRef = doc(db, 'users', partnerId);
-      const partnerSnap = await getDoc(partnerRef);
+      const partnerSnap = await getDocFromServer(partnerRef);
       const partnerData = partnerSnap.data();
       const partnerPastPartnershipIds = partnerData?.pastPartnershipIds || [];
 

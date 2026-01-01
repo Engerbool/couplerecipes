@@ -4,7 +4,7 @@ import {
   onAuthStateChanged,
   User as FirebaseAuthUser,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, getDocFromServer, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../config/firebase';
 import { FirebaseUser, User } from '../types';
 
@@ -70,7 +70,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
   if (!firebaseUser) return null;
 
   const userRef = doc(db, 'users', firebaseUser.uid);
-  const userSnap = await getDoc(userRef);
+  const userSnap = await getDocFromServer(userRef);
 
   return userSnap.exists()
     ? convertFirebaseUserToUser(userSnap.data() as FirebaseUser)
@@ -86,6 +86,7 @@ const convertFirebaseUserToUser = (fbUser: FirebaseUser): User => ({
   customPhotoURL: fbUser.customPhotoURL || null,
   partnerId: fbUser.partnerId,
   partnershipId: fbUser.partnershipId,
+  pastPartnershipIds: fbUser.pastPartnershipIds || [],
 });
 
 export const updateNickname = async (userId: string, nickname: string): Promise<void> => {
