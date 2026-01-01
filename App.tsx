@@ -17,7 +17,7 @@ import { LogoutModal } from './components/LogoutModal';
 import { ProfileSetupModal } from './components/ProfileSetupModal';
 import { LanguageToggle } from './components/LanguageToggle';
 import { DarkModeToggle } from './components/DarkModeToggle';
-import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX, X, Edit2 } from 'lucide-react';
+import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX, X, Edit2, Search } from 'lucide-react';
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -32,6 +32,7 @@ const App: React.FC = () => {
   const [showProfileEditModal, setShowProfileEditModal] = useState(false);
   const [partnerName, setPartnerName] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Firebase Auth State Listener
   useEffect(() => {
@@ -400,23 +401,83 @@ const App: React.FC = () => {
               </Button>
             </div>
 
-            {recipes.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-dark-bg-secondary rounded-3xl border-2 border-dashed border-stone-200 dark:border-dark-border-primary">
-                <div className="w-20 h-20 bg-stone-50 dark:bg-dark-bg-tertiary rounded-full flex items-center justify-center mx-auto mb-4 text-stone-300 dark:text-dark-text-tertiary">
-                  <UtensilsCrossed size={40} />
+            {/* Search Bar */}
+            {recipes.length > 0 && (
+              <div className="mb-6">
+                <div className="relative max-w-2xl">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-stone-400 dark:text-dark-text-tertiary" size={20} />
+                  <input
+                    type="text"
+                    placeholder={t('dashboard.searchPlaceholder')}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-stone-200 dark:border-dark-border-primary bg-white dark:bg-dark-bg-secondary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent outline-none transition-all"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-secondary transition-colors"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-stone-600 dark:text-dark-text-secondary mb-2">{t('dashboard.noRecipes')}</h3>
-                <p className="text-stone-400 dark:text-dark-text-tertiary max-w-xs mx-auto" dangerouslySetInnerHTML={{ __html: t('dashboard.noRecipesDesc') }} />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {recipes.map(recipe => (
-                  <div key={recipe.id} className="h-80">
-                    <RecipeCard recipe={recipe} onClick={() => handleSelectRecipe(recipe)} />
-                  </div>
-                ))}
               </div>
             )}
+
+            {(() => {
+              // Filter recipes based on search query
+              const filteredRecipes = searchQuery.trim()
+                ? recipes.filter(recipe => {
+                    const query = searchQuery.toLowerCase();
+                    // Search in title
+                    if (recipe.title.toLowerCase().includes(query)) return true;
+                    // Search in author name
+                    if (recipe.authorName.toLowerCase().includes(query)) return true;
+                    // Search in latest version ingredients
+                    const latestVersion = recipe.versions[recipe.versions.length - 1];
+                    if (latestVersion.ingredients.some(ing => {
+                      const ingredientName = typeof ing === 'string' ? ing : ing.name;
+                      return ingredientName.toLowerCase().includes(query);
+                    })) return true;
+                    return false;
+                  })
+                : recipes;
+
+              if (recipes.length === 0) {
+                return (
+                  <div className="text-center py-20 bg-white dark:bg-dark-bg-secondary rounded-3xl border-2 border-dashed border-stone-200 dark:border-dark-border-primary">
+                    <div className="w-20 h-20 bg-stone-50 dark:bg-dark-bg-tertiary rounded-full flex items-center justify-center mx-auto mb-4 text-stone-300 dark:text-dark-text-tertiary">
+                      <UtensilsCrossed size={40} />
+                    </div>
+                    <h3 className="text-lg font-bold text-stone-600 dark:text-dark-text-secondary mb-2">{t('dashboard.noRecipes')}</h3>
+                    <p className="text-stone-400 dark:text-dark-text-tertiary max-w-xs mx-auto" dangerouslySetInnerHTML={{ __html: t('dashboard.noRecipesDesc') }} />
+                  </div>
+                );
+              }
+
+              if (filteredRecipes.length === 0) {
+                return (
+                  <div className="text-center py-20 bg-white dark:bg-dark-bg-secondary rounded-3xl border border-stone-200 dark:border-dark-border-primary">
+                    <div className="w-20 h-20 bg-stone-50 dark:bg-dark-bg-tertiary rounded-full flex items-center justify-center mx-auto mb-4 text-stone-400 dark:text-dark-text-tertiary">
+                      <Search size={40} />
+                    </div>
+                    <h3 className="text-lg font-bold text-stone-600 dark:text-dark-text-secondary mb-2">{t('dashboard.noSearchResults')}</h3>
+                    <p className="text-stone-400 dark:text-dark-text-tertiary">"{searchQuery}"</p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredRecipes.map(recipe => (
+                    <div key={recipe.id} className="h-80">
+                      <RecipeCard recipe={recipe} onClick={() => handleSelectRecipe(recipe)} />
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </>
         )}
 

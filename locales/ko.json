@@ -22,7 +22,9 @@
     "newRecipe": "새 레시피",
     "noRecipes": "아직 레시피가 없습니다",
     "noRecipesDesc": "우리만의 첫 번째 요리는 무엇일까요?<br/>함께하는 메뉴를 만들어보세요.",
-    "createRecipe": "레시피 만들기"
+    "createRecipe": "레시피 만들기",
+    "searchPlaceholder": "레시피 제목, 재료, 작성자로 검색...",
+    "noSearchResults": "검색 결과가 없습니다"
   },
   "recipe": {
     "by": "{{author}} 작성",

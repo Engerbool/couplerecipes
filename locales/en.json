@@ -22,7 +22,9 @@
     "newRecipe": "New Recipe",
     "noRecipes": "No recipes yet",
     "noRecipesDesc": "What's our first dish together?<br/>Start building our shared menu.",
-    "createRecipe": "Create Recipe"
+    "createRecipe": "Create Recipe",
+    "searchPlaceholder": "Search by title, ingredients, or author...",
+    "noSearchResults": "No results found"
   },
   "recipe": {
     "by": "by {{author}}",
