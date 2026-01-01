@@ -162,42 +162,40 @@ export const getPartner = async (partnerId: string) => {
 export const leavePartnership = async (userId: string, partnershipId: string): Promise<void> => {
   console.log('[DEBUG] leavePartnership called with:', { userId, partnershipId });
 
-  const partnershipRef = doc(db, 'partnerships', partnershipId);
-  const partnershipSnap = await getDoc(partnershipRef);
-
-  if (!partnershipSnap.exists()) {
-    console.error('[DEBUG] Partnership not found:', partnershipId);
-    throw new Error('파트너십을 찾을 수 없습니다');
-  }
-
-  const partnership = partnershipSnap.data() as Partnership;
-  const partnerId = partnership.users.find(uid => uid !== userId);
-
-  if (!partnerId) {
-    console.error('[DEBUG] Partner not found in users:', partnership.users);
-    throw new Error('파트너를 찾을 수 없습니다');
-  }
-
-  console.log('[DEBUG] Found partner:', partnerId);
-
   const batch = writeBatch(db);
 
-  // 1. 본인 user 문서 업데이트
+  // 1. 먼저 본인 user 문서는 무조건 업데이트 (partnership이 없어도)
   const userRef = doc(db, 'users', userId);
   batch.update(userRef, {
     partnerId: null,
     partnershipId: null,
   });
 
-  // 2. 파트너 user 문서 업데이트
-  const partnerRef = doc(db, 'users', partnerId);
-  batch.update(partnerRef, {
-    partnerId: null,
-    partnershipId: null,
-  });
+  // 2. Partnership 문서 확인 및 파트너 업데이트
+  const partnershipRef = doc(db, 'partnerships', partnershipId);
+  const partnershipSnap = await getDoc(partnershipRef);
 
-  // 3. Partnership 문서 삭제
-  batch.delete(partnershipRef);
+  if (partnershipSnap.exists()) {
+    const partnership = partnershipSnap.data() as Partnership;
+    const partnerId = partnership.users.find(uid => uid !== userId);
+
+    if (partnerId) {
+      console.log('[DEBUG] Found partner:', partnerId);
+      // 파트너 user 문서 업데이트
+      const partnerRef = doc(db, 'users', partnerId);
+      batch.update(partnerRef, {
+        partnerId: null,
+        partnershipId: null,
+      });
+    } else {
+      console.warn('[DEBUG] Partner not found in users:', partnership.users);
+    }
+
+    // Partnership 문서 삭제
+    batch.delete(partnershipRef);
+  } else {
+    console.warn('[DEBUG] Partnership not found, but still updating user:', partnershipId);
+  }
 
   console.log('[DEBUG] About to commit batch updates');
   await batch.commit();
