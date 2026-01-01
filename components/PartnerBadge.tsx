@@ -53,7 +53,8 @@ export const PartnerBadge: React.FC<Props> = ({ partnerId, onDisconnect }) => {
 
       {showDropdown && (
         <div className="absolute right-0 top-full mt-2 bg-white dark:bg-dark-bg-secondary rounded-lg shadow-xl border border-stone-200 dark:border-dark-border-primary p-2 min-w-[200px] z-50">
-          <div className="px-3 py-2 text-sm text-stone-600 dark:text-dark-text-secondary border-b border-stone-200 dark:border-dark-border-primary mb-2">
+          {/* 모바일에서만 파트너 이름 표시 */}
+          <div className="sm:hidden px-3 py-2 text-sm text-stone-600 dark:text-dark-text-secondary border-b border-stone-200 dark:border-dark-border-primary mb-2">
             {t('nav.connectedWith', { name: partnerName })}
           </div>
           <Button
