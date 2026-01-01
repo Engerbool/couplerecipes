@@ -26,8 +26,8 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
 
   // Common cooking units
   const units = i18n.language === 'ko'
-    ? ['큰술', '작은술', '컵', 'g', 'kg', 'ml', 'L', '개', '쪽', '줌', '적당량']
-    : ['Tbsp', 'tsp', 'cup', 'g', 'kg', 'ml', 'L', 'piece', 'clove', 'handful', 'to taste'];
+    ? ['작은술', '큰술', '컵', 'g', 'kg', 'ml', 'L', '개', '쪽', '줌', '적당량']
+    : ['tsp', 'Tbsp', 'cup', 'g', 'kg', 'ml', 'L', 'piece', 'clove', 'handful', 'to taste'];
   const [title, setTitle] = useState('');
   const [image, setImage] = useState<string>('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: '', unit: '' }]);
