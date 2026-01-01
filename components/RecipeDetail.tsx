@@ -524,14 +524,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                   <Button
                     onClick={() => onEditClick(recipe)}
                     variant="secondary"
-                    className="w-full justify-center border-2 border-stone-300 dark:border-stone-600 text-stone-700 dark:text-dark-text-secondary hover:bg-stone-50 dark:hover:bg-stone-800/20"
+                    className="w-full justify-center border-2 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                   >
                     {t('recipe.edit')}
                   </Button>
                   <Button
                     onClick={() => onUpgradeClick(recipe)}
                     variant="secondary"
-                    className="w-full justify-center border-2 border-stone-300 dark:border-stone-600 text-stone-700 dark:text-dark-text-secondary hover:bg-stone-50 dark:hover:bg-stone-800/20"
+                    className="w-full justify-center border-2 border-amber-500 dark:border-amber-600 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
                   >
                     <GitBranch size={16} /> {t('recipe.upgrade')}
                   </Button>
@@ -542,7 +542,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                       }
                     }}
                     variant="secondary"
-                    className="w-full justify-center border-2 border-stone-300 dark:border-stone-600 text-stone-700 dark:text-dark-text-secondary hover:bg-stone-50 dark:hover:bg-stone-800/20"
+                    className="w-full justify-center border-2 border-red-500 dark:border-red-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     <Trash2 size={16} /> {t('recipe.delete')}
                   </Button>
