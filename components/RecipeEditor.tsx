@@ -32,30 +32,36 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   const [image, setImage] = useState<string>('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: '', unit: '' }]);
   const [steps, setSteps] = useState<string[]>(['']);
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     if (existingRecipe) {
-      if (isNewVersion) {
-        setTitle(existingRecipe.title);
-        setImage(existingRecipe.imageUrl);
-        const lastVer = existingRecipe.versions[existingRecipe.versions.length - 1];
-        
-        // Handle migration from old formats to new Ingredient format
-        const loadedIngredients = lastVer.ingredients.map(ing => {
-          if (typeof ing === 'string') {
-            // Migration: old string[] format
-            return { name: ing, quantity: '', unit: '' };
-          }
-          // Migration: old { name, amount } format to new { name, quantity, unit } format
-          if ('amount' in ing && !('quantity' in ing)) {
-            return { name: ing.name, quantity: ing.amount || '', unit: '' };
-          }
-          return ing;
-        });
+      setTitle(existingRecipe.title);
+      setImage(existingRecipe.imageUrl);
 
-        setIngredients(loadedIngredients.length > 0 ? loadedIngredients : [{ name: '', quantity: '', unit: '' }]);
-        setSteps(lastVer.steps.length > 0 ? [...lastVer.steps] : ['']);
+      const currentVer = existingRecipe.versions[existingRecipe.currentVersionIndex];
+
+      // Handle migration from old formats to new Ingredient format
+      const loadedIngredients = currentVer.ingredients.map(ing => {
+        if (typeof ing === 'string') {
+          // Migration: old string[] format
+          return { name: ing, quantity: '', unit: '' };
+        }
+        // Migration: old { name, amount } format to new { name, quantity, unit } format
+        if ('amount' in ing && !('quantity' in ing)) {
+          return { name: ing.name, quantity: ing.amount || '', unit: '' };
+        }
+        return ing;
+      });
+
+      setIngredients(loadedIngredients.length > 0 ? loadedIngredients : [{ name: '', quantity: '', unit: '' }]);
+      setSteps(currentVer.steps.length > 0 ? [...currentVer.steps] : ['']);
+
+      // isNewVersion (업그레이드)일 때는 notes 비우기, edit일 때는 기존 notes 로드
+      if (isNewVersion) {
         setNotes('');
+      } else {
+        setNotes(currentVer.notes || '');
       }
     }
   }, [existingRecipe, isNewVersion]);
@@ -136,7 +142,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
       versionNumber: existingRecipe ? existingRecipe.versions.length + 1 : 1,
       ingredients: ingredientsList,
       steps: stepsList,
-      notes: '',
+      notes: notes,
       createdAt: Timestamp.fromMillis(Date.now()),
       comments: []
     };
@@ -333,6 +339,20 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
           <Button type="button" variant="secondary" onClick={addStep} className="mt-3 w-full border border-stone-300 dark:border-dark-border-primary bg-stone-50 dark:bg-dark-bg-tertiary">
             <Plus size={16} /> {t('editor.addStep')}
           </Button>
+        </div>
+
+        {/* Notes Section */}
+        <div>
+          <label className="block text-lg font-bold text-stone-800 dark:text-dark-text-primary mb-2">
+            {t('editor.versionNotes')}
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder={t('editor.notesPlaceholder')}
+            rows={3}
+            className="w-full px-4 py-3 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none resize-y bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+          />
         </div>
 
         <div className="flex justify-end gap-3 pt-6 border-t border-stone-100 dark:border-dark-border-primary">
