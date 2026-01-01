@@ -104,7 +104,7 @@
   },
   "nickname": {
     "welcome": "환영합니다!",
-    "setupMessage": "다른 사람들에게 보여질 닉네임을 설정해주세요",
+    "setupMessage": "파트너에게 보여질 닉네임을 설정해주세요",
     "label": "닉네임",
     "placeholder": "예: 요리왕김씨",
     "hint": "2~20자 사이로 입력해주세요",

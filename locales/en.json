@@ -104,7 +104,7 @@
   },
   "nickname": {
     "welcome": "Welcome!",
-    "setupMessage": "Set a nickname that others will see",
+    "setupMessage": "Set a nickname that your partner will see",
     "label": "Nickname",
     "placeholder": "e.g., ChefMaster",
     "hint": "2-20 characters",

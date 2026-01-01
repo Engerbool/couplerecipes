@@ -4,12 +4,13 @@ import { Button } from './Button';
 import { User as UserIcon } from 'lucide-react';
 
 interface NicknameSetupModalProps {
+  defaultName: string;
   onSave: (nickname: string) => void;
 }
 
-export const NicknameSetupModal: React.FC<NicknameSetupModalProps> = ({ onSave }) => {
+export const NicknameSetupModal: React.FC<NicknameSetupModalProps> = ({ defaultName, onSave }) => {
   const { t } = useTranslation();
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(defaultName);
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

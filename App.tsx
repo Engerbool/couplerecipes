@@ -372,7 +372,7 @@ const App: React.FC = () => {
 
       {/* Nickname Setup Modal */}
       {currentUser && !currentUser.nickname && (
-        <NicknameSetupModal onSave={handleNicknameSave} />
+        <NicknameSetupModal defaultName={currentUser.name} onSave={handleNicknameSave} />
       )}
 
       {/* Nickname Edit Modal */}
