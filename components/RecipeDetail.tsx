@@ -273,14 +273,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
       <div className="bg-white dark:bg-dark-bg-secondary rounded-3xl shadow-xl overflow-hidden mb-8 border border-stone-100 dark:border-dark-border-primary">
         {/* Header Image */}
         <div
-          className="relative h-64 md:h-96 bg-stone-200 dark:bg-dark-bg-tertiary cursor-pointer group"
+          className="relative h-64 md:h-96 bg-stone-200 dark:bg-dark-bg-tertiary cursor-pointer"
           onClick={() => recipe.imageUrl && setShowImageModal(true)}
         >
           {recipe.imageUrl ? (
             <img
               src={recipe.imageUrl}
               alt={recipe.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200 dark:from-dark-bg-tertiary dark:to-dark-bg-primary">
