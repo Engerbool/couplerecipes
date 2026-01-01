@@ -116,7 +116,22 @@ export const saveRecipe = async (
     { merge: true }
   );
 
-  // 2. 버전 서브컬렉션
+  // 2. 기존 댓글 삭제 (삭제된 댓글을 Firestore에서 제거하기 위해)
+  if (recipeSnap.exists()) {
+    const versionsSnap = await getDocs(
+      collection(db, 'recipes', recipe.id, 'versions')
+    );
+    for (const versionDoc of versionsSnap.docs) {
+      const commentsSnap = await getDocs(
+        collection(db, 'recipes', recipe.id, 'versions', versionDoc.id, 'comments')
+      );
+      for (const commentDoc of commentsSnap.docs) {
+        batch.delete(commentDoc.ref);
+      }
+    }
+  }
+
+  // 3. 버전 서브컬렉션
   for (const version of recipe.versions) {
     const versionRef = doc(
       db,
@@ -133,7 +148,7 @@ export const saveRecipe = async (
       createdAt: version.createdAt || serverTimestamp(),
     });
 
-    // 3. 댓글 서브컬렉션
+    // 4. 댓글 서브컬렉션 (새로 저장)
     for (const comment of version.comments) {
       const commentRef = doc(
         db,
