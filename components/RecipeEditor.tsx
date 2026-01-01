@@ -32,6 +32,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
   const [image, setImage] = useState<string>('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: '', unit: '' }]);
   const [steps, setSteps] = useState<string[]>(['']);
+  const [focusedIngredientIndex, setFocusedIngredientIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (existingRecipe) {
@@ -245,46 +246,74 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
           </div>
           <div className="space-y-2">
             {ingredients.map((ing, index) => (
-              <div key={index} className="flex gap-2 items-center group">
-                <div className="cursor-move text-stone-300 dark:text-dark-text-tertiary hidden md:block">
-                  <div className="w-1.5 h-1.5 bg-stone-300 dark:bg-dark-text-tertiary rounded-full mb-0.5"></div>
-                  <div className="w-1.5 h-1.5 bg-stone-300 dark:bg-dark-text-tertiary rounded-full mb-0.5"></div>
-                  <div className="w-1.5 h-1.5 bg-stone-300 dark:bg-dark-text-tertiary rounded-full"></div>
+              <div key={index}>
+                {/* 입력 필드 줄 */}
+                <div className="flex gap-2 items-center group">
+                  <div className="cursor-move text-stone-300 dark:text-dark-text-tertiary hidden md:block">
+                    <div className="w-1.5 h-1.5 bg-stone-300 dark:bg-dark-text-tertiary rounded-full mb-0.5"></div>
+                    <div className="w-1.5 h-1.5 bg-stone-300 dark:bg-dark-text-tertiary rounded-full mb-0.5"></div>
+                    <div className="w-1.5 h-1.5 bg-stone-300 dark:bg-dark-text-tertiary rounded-full"></div>
+                  </div>
+
+                  <input
+                    value={ing.name}
+                    onChange={(e) => updateIngredient(index, 'name', e.target.value)}
+                    onFocus={() => setFocusedIngredientIndex(index)}
+                    onBlur={() => setFocusedIngredientIndex(null)}
+                    placeholder={t('editor.ingredientName')}
+                    className="flex-1 min-w-0 px-3 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+                  />
+
+                  <input
+                    value={ing.quantity}
+                    onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
+                    onFocus={() => setFocusedIngredientIndex(index)}
+                    onBlur={() => setFocusedIngredientIndex(null)}
+                    placeholder={t('editor.quantity')}
+                    className="w-14 md:w-20 px-2 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-center bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+                  />
+
+                  <input
+                    value={ing.unit}
+                    onChange={(e) => updateIngredient(index, 'unit', e.target.value)}
+                    onFocus={() => setFocusedIngredientIndex(index)}
+                    onBlur={() => setFocusedIngredientIndex(null)}
+                    placeholder={t('editor.unit')}
+                    list="unit-suggestions"
+                    className="w-14 md:w-24 px-2 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-center bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
+                  />
+
+                  {/* 데스크톱 버튼 - 같은 줄 호버 시 표시 */}
+                  <div className="hidden md:flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button type="button" onClick={() => moveIngredient(index, -1)} disabled={index === 0} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary disabled:opacity-30">
+                      <ArrowUp size={16}/>
+                    </button>
+                    <button type="button" onClick={() => moveIngredient(index, 1)} disabled={index === ingredients.length - 1} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary disabled:opacity-30">
+                      <ArrowDown size={16}/>
+                    </button>
+                    <button type="button" onClick={() => removeIngredient(index)} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400">
+                      <Trash2 size={16}/>
+                    </button>
+                  </div>
                 </div>
 
-                <input
-                  value={ing.name}
-                  onChange={(e) => updateIngredient(index, 'name', e.target.value)}
-                  placeholder={t('editor.ingredientName')}
-                  className="flex-grow px-3 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
-                />
-
-                <input
-                  value={ing.quantity}
-                  onChange={(e) => updateIngredient(index, 'quantity', e.target.value)}
-                  placeholder={t('editor.quantity')}
-                  className="w-16 md:w-20 px-2 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-center bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
-                />
-
-                <input
-                  value={ing.unit}
-                  onChange={(e) => updateIngredient(index, 'unit', e.target.value)}
-                  placeholder={t('editor.unit')}
-                  list="unit-suggestions"
-                  className="w-16 md:w-24 px-2 py-2 border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none text-center bg-white dark:bg-dark-bg-tertiary text-stone-800 dark:text-dark-text-primary placeholder:text-stone-400 dark:placeholder:text-dark-text-tertiary"
-                />
-
-                <div className="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button type="button" onClick={() => moveIngredient(index, -1)} disabled={index === 0} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary disabled:opacity-30">
-                    <ArrowUp size={16}/>
-                  </button>
-                  <button type="button" onClick={() => moveIngredient(index, 1)} disabled={index === ingredients.length - 1} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary disabled:opacity-30">
-                    <ArrowDown size={16}/>
-                  </button>
-                  <button type="button" onClick={() => removeIngredient(index)} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400">
-                    <Trash2 size={16}/>
-                  </button>
-                </div>
+                {/* 모바일 버튼 - 아래 줄 focus 시 표시 */}
+                {focusedIngredientIndex === index && (
+                  <div
+                    className="flex md:hidden gap-2 justify-end mt-2 pb-2"
+                    onMouseDown={(e) => e.preventDefault()}
+                  >
+                    <button type="button" onClick={() => moveIngredient(index, -1)} disabled={index === 0} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary disabled:opacity-30 bg-stone-50 dark:bg-dark-bg-tertiary rounded-lg">
+                      <ArrowUp size={16}/>
+                    </button>
+                    <button type="button" onClick={() => moveIngredient(index, 1)} disabled={index === ingredients.length - 1} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-stone-600 dark:hover:text-dark-text-primary disabled:opacity-30 bg-stone-50 dark:bg-dark-bg-tertiary rounded-lg">
+                      <ArrowDown size={16}/>
+                    </button>
+                    <button type="button" onClick={() => removeIngredient(index)} className="p-2 text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400 bg-stone-50 dark:bg-dark-bg-tertiary rounded-lg">
+                      <Trash2 size={16}/>
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
