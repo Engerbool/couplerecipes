@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Recipe, User, ViewState } from './types';
-import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser } from './services/authService';
+import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser, updateNickname } from './services/authService';
 import { getRecipesByPartnership, saveRecipe, deleteRecipe } from './services/recipeService';
 import { getPartner } from './services/partnershipService';
 import { RecipeCard } from './components/RecipeCard';
@@ -12,9 +12,11 @@ import { PartnerInviteModal } from './components/PartnerInviteModal';
 import { PartnerBadge } from './components/PartnerBadge';
 import { DisconnectModal } from './components/DisconnectModal';
 import { LogoutModal } from './components/LogoutModal';
+import { NicknameSetupModal } from './components/NicknameSetupModal';
+import { NicknameEditModal } from './components/NicknameEditModal';
 import { LanguageToggle } from './components/LanguageToggle';
 import { DarkModeToggle } from './components/DarkModeToggle';
-import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX } from 'lucide-react';
+import { User as UserIcon, LogOut, Plus, Heart, UtensilsCrossed, Share2, UserX, Edit2 } from 'lucide-react';
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ const App: React.FC = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showNicknameEditModal, setShowNicknameEditModal] = useState(false);
   const [partnerName, setPartnerName] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -63,7 +66,7 @@ const App: React.FC = () => {
         try {
           const partner = await getPartner(currentUser.partnerId);
           if (partner) {
-            setPartnerName(partner.displayName || partner.email);
+            setPartnerName(partner.nickname || partner.displayName || partner.email);
           }
         } catch (error) {
           console.error('Failed to load partner:', error);
@@ -146,6 +149,20 @@ const App: React.FC = () => {
     setShowDisconnectModal(false);
   };
 
+  const handleNicknameSave = async (nickname: string) => {
+    if (!currentUser) return;
+
+    try {
+      await updateNickname(currentUser.id, nickname);
+      const updatedUser = await getCurrentUser();
+      setCurrentUser(updatedUser);
+      setShowNicknameEditModal(false);
+    } catch (error) {
+      console.error('Failed to update nickname:', error);
+      alert('Failed to update nickname');
+    }
+  };
+
   // --- Views ---
 
   if (authLoading) {
@@ -216,7 +233,18 @@ const App: React.FC = () => {
           )}
           <div className="flex items-center gap-3 pl-4 border-l border-stone-200 dark:border-dark-border-primary">
             <div className="text-right hidden sm:block">
-              <div className="text-sm font-bold text-stone-800 dark:text-dark-text-primary">{currentUser.name}</div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-bold text-stone-800 dark:text-dark-text-primary">{currentUser.nickname || currentUser.name}</div>
+                {currentUser.nickname && (
+                  <button
+                    onClick={() => setShowNicknameEditModal(true)}
+                    className="text-stone-400 dark:text-dark-text-tertiary hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
+                    title={t('nickname.edit')}
+                  >
+                    <Edit2 size={14} />
+                  </button>
+                )}
+              </div>
             </div>
             {currentUser.photoURL ? (
               <img
@@ -339,6 +367,20 @@ const App: React.FC = () => {
         <LogoutModal
           onClose={() => setShowLogoutModal(false)}
           onConfirm={handleLogout}
+        />
+      )}
+
+      {/* Nickname Setup Modal */}
+      {currentUser && !currentUser.nickname && (
+        <NicknameSetupModal onSave={handleNicknameSave} />
+      )}
+
+      {/* Nickname Edit Modal */}
+      {showNicknameEditModal && currentUser && currentUser.nickname && (
+        <NicknameEditModal
+          currentNickname={currentUser.nickname}
+          onSave={handleNicknameSave}
+          onClose={() => setShowNicknameEditModal(false)}
         />
       )}
     </div>

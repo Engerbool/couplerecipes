@@ -176,7 +176,7 @@ export const RecipeEditor: React.FC<RecipeEditorProps> = ({
         title,
         imageUrl: image,
         authorId: user.id,
-        authorName: user.name,
+        authorName: user.nickname || user.name,
         versions: [newVersion],
         currentVersionIndex: 0,
         partnershipId: '',  // Will be set by App.tsx when saving

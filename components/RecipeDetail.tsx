@@ -53,7 +53,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
     const comment: Comment = {
       id: crypto.randomUUID(),
       userId: currentUser.id,
-      userName: currentUser.name,
+      userName: currentUser.nickname || currentUser.name,
       userPhotoURL: currentUser.photoURL,
       text: newComment,
       timestamp: Timestamp.fromMillis(Date.now()),

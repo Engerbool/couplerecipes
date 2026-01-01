@@ -27,6 +27,7 @@ export const signInWithGoogle = async (): Promise<User> => {
     await setDoc(userRef, {
       uid: firebaseUser.uid,
       ...userData,
+      nickname: null,  // 닉네임은 나중에 설정
       partnerId: null,
       partnershipId: null,
       createdAt: serverTimestamp(),
@@ -78,8 +79,14 @@ export const getCurrentUser = async (): Promise<User | null> => {
 const convertFirebaseUserToUser = (fbUser: FirebaseUser): User => ({
   id: fbUser.uid,
   name: fbUser.displayName,
+  nickname: fbUser.nickname || null,
   email: fbUser.email,
   photoURL: fbUser.photoURL,
   partnerId: fbUser.partnerId,
   partnershipId: fbUser.partnershipId,
 });
+
+export const updateNickname = async (userId: string, nickname: string): Promise<void> => {
+  const userRef = doc(db, 'users', userId);
+  await updateDoc(userRef, { nickname });
+};

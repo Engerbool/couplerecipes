@@ -15,7 +15,7 @@ export const PartnerBadge: React.FC<Props> = ({ partnerId }) => {
     const fetchPartner = async () => {
       const partner = await getPartner(partnerId);
       if (partner) {
-        setPartnerName(partner.displayName || partner.email);
+        setPartnerName(partner.nickname || partner.displayName || partner.email);
       }
     };
     fetchPartner();

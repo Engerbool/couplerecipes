@@ -2,7 +2,8 @@ import { Timestamp } from 'firebase/firestore';
 
 export interface User {
   id: string;                    // Firebase UID
-  name: string;                  // displayName
+  name: string;                  // displayName (Google name)
+  nickname: string | null;       // User's custom nickname
   email: string;                 // Firebase email
   photoURL: string | null;       // Firebase photoURL
   partnerId: string | null;      // Partner's UID
@@ -13,6 +14,7 @@ export interface User {
 export interface FirebaseUser {
   uid: string;
   displayName: string;
+  nickname: string | null;
   email: string;
   photoURL: string | null;
   partnerId: string | null;
@@ -76,4 +78,5 @@ export type ViewState =
   | 'VIEW_RECIPE'
   | 'EDIT_VERSION'
   | 'UPGRADE_VERSION'
-  | 'PARTNER_INVITE';
+  | 'PARTNER_INVITE'
+  | 'SETUP_NICKNAME';

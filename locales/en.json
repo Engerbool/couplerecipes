@@ -102,6 +102,18 @@
     "disconnectSuccess": "Successfully disconnected from partner",
     "disconnectFailed": "Failed to disconnect from partner"
   },
+  "nickname": {
+    "welcome": "Welcome!",
+    "setupMessage": "Set a nickname that others will see",
+    "label": "Nickname",
+    "placeholder": "e.g., ChefMaster",
+    "hint": "2-20 characters",
+    "save": "Get Started",
+    "tooShort": "Nickname must be at least 2 characters",
+    "tooLong": "Nickname must be at most 20 characters",
+    "edit": "Change Nickname",
+    "editSuccess": "Nickname updated successfully"
+  },
   "comment": {
     "howDidItTaste": "How did it taste?",
     "rating": "Rating",
