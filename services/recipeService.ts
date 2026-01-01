@@ -105,11 +105,6 @@ export const getRecipesByUser = async (
   currentPartnershipId: string | null,
   pastPartnershipIds?: string[]
 ): Promise<Recipe[]> => {
-  console.log('=== getRecipesByUser DEBUG ===');
-  console.log('Input userId:', userId);
-  console.log('Input currentPartnershipId:', currentPartnershipId);
-  console.log('Input pastPartnershipIds:', pastPartnershipIds);
-
   const allPartnershipIds = [
     userId, // 개인 레시피 (partnershipId = userId)
     ...(currentPartnershipId ? [currentPartnershipId] : []),
@@ -119,10 +114,7 @@ export const getRecipesByUser = async (
   // 중복 제거 (currentPartnershipId가 pastPartnershipIds에도 있을 경우 대비)
   const uniquePartnershipIds = Array.from(new Set(allPartnershipIds));
 
-  console.log('Query partnershipIds (unique):', uniquePartnershipIds);
-
   if (uniquePartnershipIds.length === 0) {
-    console.log('No partnership IDs to query');
     return [];
   }
 
@@ -133,7 +125,6 @@ export const getRecipesByUser = async (
 
   for (let i = 0; i < uniquePartnershipIds.length; i += BATCH_SIZE) {
     const batch = uniquePartnershipIds.slice(i, i + BATCH_SIZE);
-    console.log(`Query batch ${i / BATCH_SIZE + 1}:`, batch);
 
     const q = query(
       collection(db, 'recipes'),
@@ -141,18 +132,9 @@ export const getRecipesByUser = async (
       orderBy('updatedAt', 'desc')
     );
 
-    console.log('Executing Firestore query...');
     const snapshot = await getDocs(q);
-    console.log(`Query returned ${snapshot.docs.length} documents`);
 
     for (const docSnap of snapshot.docs) {
-      const data = docSnap.data();
-      console.log('Recipe doc:', {
-        id: docSnap.id,
-        partnershipId: data.partnershipId,
-        title: data.title,
-        authorId: data.authorId
-      });
       const recipe = await loadRecipeData(docSnap);
       recipes.push(recipe);
     }
@@ -165,9 +147,6 @@ export const getRecipesByUser = async (
     return bTime - aTime;
   });
 
-  console.log(`Total recipes loaded: ${recipes.length}`);
-  console.log('=== END getRecipesByUser DEBUG ===');
-
   return recipes;
 };
 
@@ -179,17 +158,8 @@ export const saveRecipe = async (
   recipe: Recipe,
   partnershipId: string
 ): Promise<void> => {
-  console.log('=== saveRecipe DEBUG ===');
-  console.log('Recipe ID:', recipe.id);
-  console.log('Partnership ID:', partnershipId);
-  console.log('Author ID:', recipe.authorId);
-  console.log('Title:', recipe.title);
-  console.log('Versions count:', recipe.versions.length);
-
   const recipeRef = doc(db, 'recipes', recipe.id);
   const recipeSnap = await getDoc(recipeRef);
-
-  console.log('Recipe exists:', recipeSnap.exists());
 
   const batch = writeBatch(db);
 
@@ -262,10 +232,7 @@ export const saveRecipe = async (
     }
   }
 
-  console.log('Committing batch write...');
   await batch.commit();
-  console.log('Batch write successful!');
-  console.log('=== END saveRecipe DEBUG ===');
 };
 
 /**
