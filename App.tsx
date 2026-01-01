@@ -142,8 +142,14 @@ const App: React.FC = () => {
   };
 
   const handleDisconnectSuccess = async () => {
-    const updatedUser = await getCurrentUser();
-    setCurrentUser(updatedUser);
+    if (!currentUser) return;
+
+    // 직접 상태 업데이트 (Firestore 캐시 문제 방지)
+    setCurrentUser({
+      ...currentUser,
+      partnerId: null,
+      partnershipId: null
+    });
     setRecipes([]);
     setShowDisconnectModal(false);
   };
