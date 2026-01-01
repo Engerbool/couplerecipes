@@ -4,6 +4,7 @@ import { Recipe, User, ViewState } from './types';
 import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser, updateProfile } from './services/authService';
 import { getRecipesByUser, saveRecipe, deleteRecipe } from './services/recipeService';
 import { getPartner } from './services/partnershipService';
+import { auth } from './config/firebase';
 import { RecipeCard } from './components/RecipeCard';
 import { RecipeEditor } from './components/RecipeEditor';
 import { RecipeDetail } from './components/RecipeDetail';
@@ -46,6 +47,15 @@ const App: React.FC = () => {
     const loadRecipes = async () => {
       if (currentUser) {
         try {
+          // 인증 상태 확인 로그
+          console.log('=== Recipe Query Debug ===');
+          console.log('Current Firebase Auth User:', auth.currentUser);
+          console.log('Current User from state:', currentUser);
+          console.log('User ID:', currentUser.id);
+          console.log('Partnership ID:', currentUser.partnershipId);
+          console.log('Past Partnership IDs:', currentUser.pastPartnershipIds);
+          console.log('========================');
+
           const recipes = await getRecipesByUser(
             currentUser.id,
             currentUser.partnershipId,
