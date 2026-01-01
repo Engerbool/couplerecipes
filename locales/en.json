@@ -104,7 +104,10 @@
   },
   "comment": {
     "howDidItTaste": "How did it taste?",
-    "rating": "Rating"
+    "rating": "Rating",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this comment?"
   },
   "common": {
     "pleaseConnectPartner": "Please connect with a partner first",

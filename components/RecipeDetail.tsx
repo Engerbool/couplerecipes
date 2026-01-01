@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Timestamp } from 'firebase/firestore';
 import { Recipe, User, Comment } from '../types';
 import { Button } from './Button';
-import { ArrowLeft, GitBranch, MessageSquare, Star, Send, ChefHat, MonitorPlay, CheckCircle2, Circle, X, User as UserIcon, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, GitBranch, MessageSquare, Star, Send, ChefHat, MonitorPlay, CheckCircle2, Circle, X, User as UserIcon, UtensilsCrossed, Edit2, Trash2, Check } from 'lucide-react';
 
 interface RecipeDetailProps {
   recipe: Recipe;
@@ -26,7 +26,12 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
   const [activeVersionIndex, setActiveVersionIndex] = useState(recipe.versions.length - 1);
   const [newComment, setNewComment] = useState('');
   const [rating, setRating] = useState(5);
-  
+
+  // Comment Edit State
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState('');
+  const [editingRating, setEditingRating] = useState(5);
+
   // Cooking Mode State
   const [cookingMode, setCookingMode] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -64,6 +69,53 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
     const updatedRecipe = { ...recipe, versions: updatedVersions };
     onUpdateRecipe(updatedRecipe);
     setNewComment('');
+  };
+
+  const handleEditComment = (comment: Comment) => {
+    setEditingCommentId(comment.id);
+    setEditingText(comment.text);
+    setEditingRating(comment.rating || 5);
+  };
+
+  const handleSaveEdit = (commentId: string) => {
+    const updatedVersions = [...recipe.versions];
+    const comments = activeVersion.comments.map(c =>
+      c.id === commentId
+        ? { ...c, text: editingText, rating: editingRating }
+        : c
+    );
+
+    updatedVersions[activeVersionIndex] = {
+      ...activeVersion,
+      comments
+    };
+
+    const updatedRecipe = { ...recipe, versions: updatedVersions };
+    onUpdateRecipe(updatedRecipe);
+    setEditingCommentId(null);
+    setEditingText('');
+    setEditingRating(5);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingText('');
+    setEditingRating(5);
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    if (!confirm(t('comment.deleteConfirm'))) return;
+
+    const updatedVersions = [...recipe.versions];
+    const comments = activeVersion.comments.filter(c => c.id !== commentId);
+
+    updatedVersions[activeVersionIndex] = {
+      ...activeVersion,
+      comments
+    };
+
+    const updatedRecipe = { ...recipe, versions: updatedVersions };
+    onUpdateRecipe(updatedRecipe);
   };
 
   const toggleStep = (index: number) => {
@@ -344,37 +396,107 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                 {activeVersion.comments.length === 0 ? (
                   <div className="text-center text-stone-400 dark:text-dark-text-tertiary py-4 text-sm" dangerouslySetInnerHTML={{ __html: t('recipe.noFeedback') }} />
                 ) : (
-                  activeVersion.comments.map(comment => (
-                    <div key={comment.id} className="bg-white dark:bg-dark-bg-secondary p-3 rounded-xl border border-stone-100 dark:border-dark-border-primary shadow-sm">
-                      <div className="flex gap-3">
-                        {comment.userPhotoURL ? (
-                          <img
-                            src={comment.userPhotoURL}
-                            alt={comment.userName}
-                            className="w-8 h-8 rounded-full flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-                            <UserIcon size={16} className="text-amber-600 dark:text-amber-500" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-bold text-sm text-stone-800 dark:text-dark-text-primary">{comment.userName}</span>
-                            <div className="flex text-amber-400">
-                              {[...Array(comment.rating)].map((_, i) => (
-                                <Star key={i} size={10} fill="currentColor" />
-                              ))}
+                  activeVersion.comments.map(comment => {
+                    const isEditing = editingCommentId === comment.id;
+                    const isOwner = comment.userId === currentUser.id;
+
+                    return (
+                      <div key={comment.id} className="bg-white dark:bg-dark-bg-secondary p-3 rounded-xl border border-stone-100 dark:border-dark-border-primary shadow-sm">
+                        <div className="flex gap-3">
+                          {comment.userPhotoURL ? (
+                            <img
+                              src={comment.userPhotoURL}
+                              alt={comment.userName}
+                              className="w-8 h-8 rounded-full flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                              <UserIcon size={16} className="text-amber-600 dark:text-amber-500" />
                             </div>
-                          </div>
-                          <p className="text-stone-600 dark:text-dark-text-secondary text-sm mb-2">{comment.text}</p>
-                          <div className="text-xs text-stone-400 dark:text-dark-text-tertiary text-right">
-                            {comment.timestamp.toDate().toLocaleDateString()}
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-1">
+                              <span className="font-bold text-sm text-stone-800 dark:text-dark-text-primary">{comment.userName}</span>
+                              <div className="flex items-center gap-2">
+                                {isEditing ? (
+                                  <div className="flex gap-1">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setEditingRating(star)}
+                                        className={`transition-transform hover:scale-110 ${editingRating >= star ? 'text-amber-400 fill-amber-400' : 'text-stone-300'}`}
+                                      >
+                                        <Star size={12} fill={editingRating >= star ? "currentColor" : "none"} />
+                                      </button>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="flex text-amber-400">
+                                    {[...Array(comment.rating)].map((_, i) => (
+                                      <Star key={i} size={10} fill="currentColor" />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {isEditing ? (
+                              <div className="space-y-2">
+                                <textarea
+                                  value={editingText}
+                                  onChange={(e) => setEditingText(e.target.value)}
+                                  rows={2}
+                                  className="w-full px-2 py-1 text-sm border border-stone-300 dark:border-dark-border-primary rounded-lg focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 outline-none resize-none bg-white dark:bg-dark-bg-secondary text-stone-800 dark:text-dark-text-primary"
+                                />
+                                <div className="flex justify-end gap-2">
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="text-xs px-2 py-1 text-stone-500 dark:text-dark-text-secondary hover:text-stone-800 dark:hover:text-dark-text-primary"
+                                  >
+                                    {t('editor.cancel')}
+                                  </button>
+                                  <button
+                                    onClick={() => handleSaveEdit(comment.id)}
+                                    className="text-xs px-2 py-1 bg-amber-500 text-white rounded hover:bg-amber-600 flex items-center gap-1"
+                                  >
+                                    <Check size={12} /> {t('editor.save')}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="text-stone-600 dark:text-dark-text-secondary text-sm mb-2">{comment.text}</p>
+                                <div className="flex justify-between items-center">
+                                  <div className="text-xs text-stone-400 dark:text-dark-text-tertiary">
+                                    {comment.timestamp.toDate().toLocaleDateString()}
+                                  </div>
+                                  {isOwner && (
+                                    <div className="flex gap-1">
+                                      <button
+                                        onClick={() => handleEditComment(comment)}
+                                        className="text-xs p-1 text-stone-400 dark:text-dark-text-tertiary hover:text-blue-500 dark:hover:text-blue-400"
+                                        title={t('comment.edit')}
+                                      >
+                                        <Edit2 size={12} />
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteComment(comment.id)}
+                                        className="text-xs p-1 text-stone-400 dark:text-dark-text-tertiary hover:text-red-500 dark:hover:text-red-400"
+                                        title={t('comment.delete')}
+                                      >
+                                        <Trash2 size={12} />
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>

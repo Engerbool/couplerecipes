@@ -104,7 +104,10 @@
   },
   "comment": {
     "howDidItTaste": "어떤 맛이었나요?",
-    "rating": "평점"
+    "rating": "평점",
+    "edit": "수정",
+    "delete": "삭제",
+    "deleteConfirm": "댓글을 삭제하시겠습니까?"
   },
   "common": {
     "pleaseConnectPartner": "먼저 파트너와 연결해주세요",
