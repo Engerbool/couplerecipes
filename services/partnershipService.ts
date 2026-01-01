@@ -2,6 +2,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocFromServer,
   setDoc,
   updateDoc,
   query,
@@ -23,7 +24,8 @@ const generateInviteCode = (): string => {
  */
 export const createPartnership = async (userId: string): Promise<string> => {
   const userRef = doc(db, 'users', userId);
-  const userSnap = await getDoc(userRef);
+  // 캐시를 무시하고 서버에서 직접 가져오기
+  const userSnap = await getDocFromServer(userRef);
 
   if (userSnap.exists() && userSnap.data().partnershipId) {
     throw new Error('이미 파트너가 있습니다');
@@ -96,7 +98,8 @@ export const joinPartnership = async (
   inviteCode: string
 ): Promise<void> => {
   const userRef = doc(db, 'users', userId);
-  const userSnap = await getDoc(userRef);
+  // 캐시를 무시하고 서버에서 직접 가져오기
+  const userSnap = await getDocFromServer(userRef);
 
   if (userSnap.exists() && userSnap.data().partnershipId) {
     throw new Error('이미 파트너가 있습니다');
