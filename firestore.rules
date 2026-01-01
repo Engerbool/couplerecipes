@@ -40,41 +40,55 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (
         resource.data.partnershipId == request.auth.uid ||
         (exists(/databases/$(database)/documents/partnerships/$(resource.data.partnershipId)) &&
-         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(resource.data.partnershipId)).data.users)
+         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(resource.data.partnershipId)).data.users) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         resource.data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
       );
       allow create: if isAuthenticated() && (
         request.resource.data.partnershipId == request.auth.uid ||
         (exists(/databases/$(database)/documents/partnerships/$(request.resource.data.partnershipId)) &&
-         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(request.resource.data.partnershipId)).data.users)
+         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(request.resource.data.partnershipId)).data.users) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         request.resource.data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
       );
       allow update, delete: if isAuthenticated() && (
         resource.data.partnershipId == request.auth.uid ||
         (exists(/databases/$(database)/documents/partnerships/$(resource.data.partnershipId)) &&
-         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(resource.data.partnershipId)).data.users)
+         request.auth.uid in get(/databases/$(database)/documents/partnerships/$(resource.data.partnershipId)).data.users) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         resource.data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
       );
 
       match /versions/{versionId} {
         allow read: if isAuthenticated() && (
           get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
           (exists(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)) &&
-           request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users)
+           request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users) ||
+          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+           get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
         );
         allow write: if isAuthenticated() && (
           get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
           (exists(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)) &&
-           request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users)
+           request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users) ||
+          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+           get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
         );
 
         match /comments/{commentId} {
           allow read: if isAuthenticated() && (
             get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
             (exists(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)) &&
-             request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users)
+             request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users) ||
+            (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
           );
           allow create: if isAuthenticated() && (
             get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId == request.auth.uid ||
             (exists(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)) &&
-             request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users)
+             request.auth.uid in get(/databases/$(database)/documents/partnerships/$(get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId)).data.users) ||
+            (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/recipes/$(recipeId)).data.partnershipId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pastPartnershipIds)
           );
           allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
         }
