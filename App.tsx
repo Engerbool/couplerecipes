@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Recipe, User, ViewState } from './types';
 import { signInWithGoogle, logout, onAuthStateChange, getCurrentUser, updateProfile } from './services/authService';
-import { getRecipesByPartnership, saveRecipe, deleteRecipe } from './services/recipeService';
+import { getRecipesByUser, saveRecipe, deleteRecipe } from './services/recipeService';
 import { getPartner } from './services/partnershipService';
 import { RecipeCard } from './components/RecipeCard';
 import { RecipeEditor } from './components/RecipeEditor';
@@ -39,12 +39,15 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Load recipes when user has partnership
+  // Load recipes when user has partnership (현재 + 과거)
   useEffect(() => {
     const loadRecipes = async () => {
-      if (currentUser?.partnershipId) {
+      if (currentUser) {
         try {
-          const recipes = await getRecipesByPartnership(currentUser.partnershipId);
+          const recipes = await getRecipesByUser(
+            currentUser.partnershipId,
+            currentUser.pastPartnershipIds
+          );
           setRecipes(recipes);
         } catch (error) {
           console.error('Failed to load recipes:', error);
@@ -110,7 +113,10 @@ const App: React.FC = () => {
 
     try {
       await saveRecipe(recipe, currentUser.partnershipId);
-      const updatedRecipes = await getRecipesByPartnership(currentUser.partnershipId);
+      const updatedRecipes = await getRecipesByUser(
+        currentUser.partnershipId,
+        currentUser.pastPartnershipIds
+      );
       setRecipes(updatedRecipes);
       setView('DASHBOARD');
       setSelectedRecipe(null);
@@ -144,13 +150,23 @@ const App: React.FC = () => {
   const handleDisconnectSuccess = async () => {
     if (!currentUser) return;
 
-    // 직접 상태 업데이트 (Firestore 캐시 문제 방지)
-    setCurrentUser({
-      ...currentUser,
-      partnerId: null,
-      partnershipId: null
-    });
-    setRecipes([]);
+    // Firestore에서 최신 유저 정보 가져오기 (pastPartnershipIds 포함)
+    const updatedUser = await getCurrentUser();
+    setCurrentUser(updatedUser);
+
+    // 과거 파트너십 레시피 로드 (파트너 끊어도 레시피는 유지)
+    if (updatedUser) {
+      try {
+        const recipes = await getRecipesByUser(
+          updatedUser.partnershipId,
+          updatedUser.pastPartnershipIds
+        );
+        setRecipes(recipes);
+      } catch (error) {
+        console.error('Failed to load recipes after disconnect:', error);
+      }
+    }
+
     setShowDisconnectModal(false);
   };
 
@@ -349,7 +365,10 @@ const App: React.FC = () => {
               try {
                 await saveRecipe(updated, currentUser.partnershipId);
                 setSelectedRecipe(updated);
-                const updatedRecipes = await getRecipesByPartnership(currentUser.partnershipId);
+                const updatedRecipes = await getRecipesByUser(
+                  currentUser.partnershipId,
+                  currentUser.pastPartnershipIds
+                );
                 setRecipes(updatedRecipes);
               } catch (error) {
                 console.error('Failed to update recipe:', error);

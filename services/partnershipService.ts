@@ -164,14 +164,25 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
 
   const batch = writeBatch(db);
 
-  // 1. 먼저 본인 user 문서는 무조건 업데이트 (partnership이 없어도)
+  // 1. 본인 user 문서 가져오기 (pastPartnershipIds 확인용)
   const userRef = doc(db, 'users', userId);
+  const userSnap = await getDoc(userRef);
+  const userData = userSnap.data();
+  const pastPartnershipIds = userData?.pastPartnershipIds || [];
+
+  // 2. 현재 partnershipId를 pastPartnershipIds에 추가 (중복 방지)
+  if (!pastPartnershipIds.includes(partnershipId)) {
+    pastPartnershipIds.push(partnershipId);
+  }
+
+  // 3. 본인 user 문서 업데이트 (partnership이 없어도)
   batch.update(userRef, {
     partnerId: null,
     partnershipId: null,
+    pastPartnershipIds,
   });
 
-  // 2. Partnership 문서 확인 및 파트너 업데이트
+  // 4. Partnership 문서 확인 및 파트너 업데이트
   const partnershipRef = doc(db, 'partnerships', partnershipId);
   const partnershipSnap = await getDoc(partnershipRef);
 
@@ -181,11 +192,20 @@ export const leavePartnership = async (userId: string, partnershipId: string): P
 
     if (partnerId) {
       console.log('[DEBUG] Found partner:', partnerId);
-      // 파트너 user 문서 업데이트
+      // 파트너 user 문서도 동일하게 업데이트
       const partnerRef = doc(db, 'users', partnerId);
+      const partnerSnap = await getDoc(partnerRef);
+      const partnerData = partnerSnap.data();
+      const partnerPastPartnershipIds = partnerData?.pastPartnershipIds || [];
+
+      if (!partnerPastPartnershipIds.includes(partnershipId)) {
+        partnerPastPartnershipIds.push(partnershipId);
+      }
+
       batch.update(partnerRef, {
         partnerId: null,
         partnershipId: null,
+        pastPartnershipIds: partnerPastPartnershipIds,
       });
     } else {
       console.warn('[DEBUG] Partner not found in users:', partnership.users);

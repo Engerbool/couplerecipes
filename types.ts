@@ -9,6 +9,7 @@ export interface User {
   customPhotoURL: string | null; // User uploaded or selected photo
   partnerId: string | null;      // Partner's UID
   partnershipId: string | null;  // Partnership document ID
+  pastPartnershipIds?: string[]; // 과거 파트너십 ID들 (해제된 파트너십 레시피 접근용)
 }
 
 // Firestore 사용자 타입 (내부용)
