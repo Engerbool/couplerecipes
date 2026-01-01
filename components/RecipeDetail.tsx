@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Timestamp } from 'firebase/firestore';
 import { Recipe, User, Comment } from '../types';
@@ -38,6 +38,9 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
   const [cookingMode, setCookingMode] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [completedIngredients, setCompletedIngredients] = useState<number[]>([]);
+
+  // Image Modal State
+  const [showImageModal, setShowImageModal] = useState(false);
 
   const activeVersion = recipe.versions[activeVersionIndex];
   const isLatest = activeVersionIndex === recipe.versions.length - 1;
@@ -141,6 +144,17 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
     setCompletedIngredients([]);
     setCookingMode(true);
   };
+
+  // ESC key to close image modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showImageModal) {
+        setShowImageModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [showImageModal]);
 
   // --- Cooking Mode View ---
   if (cookingMode) {
@@ -258,19 +272,22 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
 
       <div className="bg-white dark:bg-dark-bg-secondary rounded-3xl shadow-xl overflow-hidden mb-8 border border-stone-100 dark:border-dark-border-primary">
         {/* Header Image */}
-        <div className="relative h-64 md:h-96 bg-stone-200 dark:bg-dark-bg-tertiary">
+        <div
+          className="relative h-64 md:h-96 bg-stone-200 dark:bg-dark-bg-tertiary cursor-pointer group"
+          onClick={() => recipe.imageUrl && setShowImageModal(true)}
+        >
           {recipe.imageUrl ? (
             <img
               src={recipe.imageUrl}
               alt={recipe.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200 dark:from-dark-bg-tertiary dark:to-dark-bg-primary">
               <UtensilsCrossed size={120} className="text-stone-300 dark:text-dark-text-tertiary opacity-30" />
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 dark:from-black/90 via-transparent to-transparent flex items-end">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 dark:from-black/90 via-transparent to-transparent flex items-end pointer-events-none">
             <div className="p-6 md:p-10 w-full text-white">
               <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight">{recipe.title}</h1>
               <div className="flex flex-wrap items-center gap-4 text-sm md:text-base font-medium opacity-90">
@@ -552,6 +569,27 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {showImageModal && recipe.imageUrl && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setShowImageModal(false)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/80 hover:text-white bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
+            onClick={() => setShowImageModal(false)}
+          >
+            <X size={24} />
+          </button>
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 };
